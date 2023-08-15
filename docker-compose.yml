@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      target: api
+    ports:
+      - "8080:5000"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      POSTGRES_PASSWORD: "fh6Dj01s"
+      POSTGRES_HOST: "db"
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "fh6Dj01s"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "cryptobank"
