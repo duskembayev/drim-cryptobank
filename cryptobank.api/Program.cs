@@ -2,6 +2,8 @@
 using cryptobank.api.dal;
 using Microsoft.EntityFrameworkCore;
 
+const int dbWarmupTimeout = 500;
+
 var host = Host
     .CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
@@ -9,7 +11,7 @@ var host = Host
 
 using (var serviceScope = host.Services.CreateScope())
 {
-    await Task.Delay(1_000);
+    await Task.Delay(dbWarmupTimeout);
 
     var dbContext = serviceScope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
     var env = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
