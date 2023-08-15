@@ -1,5 +1,7 @@
 ﻿using cryptobank.api.config;
 using cryptobank.api.dal;
+using cryptobank.api.dal.news;
+using cryptobank.api.dto;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -18,6 +20,11 @@ public class Startup
     {
         services.AddDbContext<CryptoBankDbContext>(builder => builder.UseNpgsql(GetConnectionString()));
         services.AddControllers();
+
+        services.AddTransient<INewsRepository, NewsRepository>();
+        services.AddSingleton<IDtoTranslator, DtoTranslator>();
+
+        services.Configure<NewsConfig>(Configuration.GetSection(ConfigConstants.NewsSectionKey));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
