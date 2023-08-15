@@ -9,7 +9,7 @@ public class CryptoBankDbContext : DbContext
     {
     }
 
-    public DbSet<NewsModel> News { get; set; }
+    public DbSet<NewsModel> News { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
