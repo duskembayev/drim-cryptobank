@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Enhanced.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace cryptobank.api.dal.news;
 
+[ContainerEntry(ServiceLifetime.Scoped, typeof(INewsRepository))]
 public sealed class NewsRepository : INewsRepository
 {
     private readonly CryptoBankDbContext _dbContext;

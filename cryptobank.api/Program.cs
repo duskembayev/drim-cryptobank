@@ -1,25 +1,21 @@
-﻿using cryptobank.api;
+﻿using cryptobank.api.config;
 using cryptobank.api.dal;
+using cryptobank.api.Enhanced.DependencyInjection;
+using cryptobank.api.utils;
 using Microsoft.EntityFrameworkCore;
 
-const int dbWarmupTimeout = 500;
+var appBuilder = WebApplication.CreateBuilder(args);
 
-var host = Host
-    .CreateDefaultBuilder(args)
-    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-    .Build();
+appBuilder.Services
+    .Configure<NewsConfig>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
+    .AddDbContext<CryptoBankDbContext>(options =>
+        options.UseNpgsql(appBuilder.Configuration.GetNpgsqlConnectionString()))
+    .AddEnhancedModules()
+    .AddControllers();
 
-using (var serviceScope = host.Services.CreateScope())
-{
-    await Task.Delay(dbWarmupTimeout);
+var app = appBuilder.Build();
 
-    var dbContext = serviceScope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-    var env = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+app.MapControllers();
 
-    if (await dbContext.Database.EnsureCreatedAsync())
-        await dbContext.ApplySamplesAsync(env);
-    else
-        await dbContext.Database.MigrateAsync();
-}
-
-await host.RunAsync();
+await app.RestoreDatabaseAsync(500);
+await app.RunAsync();
