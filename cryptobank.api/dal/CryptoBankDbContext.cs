@@ -15,30 +15,26 @@ public class CryptoBankDbContext : DbContext
     {
         var newsBuilder = modelBuilder.Entity<NewsModel>().ToTable("News");
 
-        newsBuilder.HasKey(n => n.Mrn);
+        newsBuilder.HasKey(n => n.Id);
         
         newsBuilder
-            .Property(n => n.Mrn)
-            .HasColumnType("varchar(36)")
+            .Property(n => n.Id)
             .IsRequired()
             .HasMaxLength(36);
 
         newsBuilder.Property(n => n.Title)
-            .HasColumnType("varchar(500)")
             .IsRequired()
             .HasMaxLength(500);
 
         newsBuilder.Property(n => n.Content)
-            .HasColumnType("varchar(10000)")
-            .IsRequired()
-            .HasMaxLength(10000);
+            .HasColumnType("text")
+            .IsRequired();
 
         newsBuilder.Property(n => n.Date)
             .HasColumnType("timestamp")
             .IsRequired();
 
         newsBuilder.Property(n => n.Author)
-            .HasColumnType("varchar(100)")
             .IsRequired()
             .HasMaxLength(100);
     }
