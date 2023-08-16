@@ -1,6 +1,6 @@
 ﻿namespace cryptobank.api.config;
 
-public class NewsConfig
+public class NewsOptions
 {
     public int ListingCapacity { get; set; } = 10;
 }

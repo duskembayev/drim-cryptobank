@@ -10,9 +10,9 @@ public class NewsController : ControllerBase
 {
     private readonly INewsRepository _repository;
     private readonly IDtoTranslator _translator;
-    private readonly IOptions<NewsConfig> _options;
+    private readonly IOptions<NewsOptions> _options;
 
-    public NewsController(INewsRepository repository, IDtoTranslator translator, IOptions<NewsConfig> options)
+    public NewsController(INewsRepository repository, IDtoTranslator translator, IOptions<NewsOptions> options)
     {
         _repository = repository;
         _translator = translator;

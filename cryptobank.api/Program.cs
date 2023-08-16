@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 var appBuilder = WebApplication.CreateBuilder(args);
 
 appBuilder.Services
-    .Configure<NewsConfig>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
+    .Configure<NewsOptions>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
     .AddDbContext<CryptoBankDbContext>(options =>
         options.UseNpgsql(appBuilder.Configuration.GetNpgsqlConnectionString()))
     .AddEnhancedModules()
