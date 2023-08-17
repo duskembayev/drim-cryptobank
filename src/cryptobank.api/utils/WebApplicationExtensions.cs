@@ -15,8 +15,12 @@ internal static class WebApplicationExtensions
         var env = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
         if (await dbContext.Database.EnsureCreatedAsync())
+        {
+            await dbContext.ApplyReferencesAsync();
             await dbContext.ApplySamplesAsync(env);
-        else
-            await dbContext.Database.MigrateAsync();
+            return;
+        }
+
+        await dbContext.Database.MigrateAsync();
     }
 }

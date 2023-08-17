@@ -1,14 +1,28 @@
 ﻿using cryptobank.api.dal.news;
+using cryptobank.api.dal.users;
 
 namespace cryptobank.api.dal;
 
-public static class SampleDataSeed
+public static class PredefinedDataSeed
 {
+    public static async Task ApplyReferencesAsync(this CryptoBankDbContext dbContext)
+    {
+        foreach (var roleId in Enum.GetValues<RoleId>().Where(id => id is not RoleId.None))
+            dbContext.Roles.Add(
+                new Role
+                {
+                    Id = (int) roleId,
+                    Name = roleId.ToString("G")
+                });
+
+        await dbContext.SaveChangesAsync();
+    }
+
     public static async Task ApplySamplesAsync(this CryptoBankDbContext dbContext, IWebHostEnvironment env)
     {
         if (!env.IsDevelopment())
             return;
-        
+
         dbContext.News.Add(new News
         {
             Id = "1EE9D164-883D-4E05-AF8D-1A541A6E5D92",
