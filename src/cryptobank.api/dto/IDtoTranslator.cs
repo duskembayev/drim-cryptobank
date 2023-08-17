@@ -4,5 +4,5 @@ namespace cryptobank.api.dto;
 
 public interface IDtoTranslator
 {
-    News Translate(NewsModel model);
+    NewsModel Translate(News news);
 }

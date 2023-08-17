@@ -2,5 +2,5 @@
 
 public interface INewsRepository
 {
-    Task<IReadOnlyList<NewsModel>> ListAsync(int count, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<News>> ListAsync(int count, CancellationToken cancellationToken = default);
 }

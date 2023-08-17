@@ -9,7 +9,7 @@ public static class SampleDataSeed
         if (!env.IsDevelopment())
             return;
         
-        dbContext.News.Add(new NewsModel
+        dbContext.News.Add(new News
         {
             Id = "1EE9D164-883D-4E05-AF8D-1A541A6E5D92",
             Title = "Bitcoin is going to the moon!",
@@ -18,7 +18,7 @@ public static class SampleDataSeed
             Author = "John Doe"
         });
 
-        dbContext.News.Add(new NewsModel
+        dbContext.News.Add(new News
         {
             Id = "80B4F2EA-A9A0-418B-B158-6816CDE7E6CD",
             Title = "Oh no, Bitcoin is crashing!",

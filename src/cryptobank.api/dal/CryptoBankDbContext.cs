@@ -9,11 +9,11 @@ public class CryptoBankDbContext : DbContext
     {
     }
 
-    public DbSet<NewsModel> News { get; set; } = null!;
+    public DbSet<News> News { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var newsBuilder = modelBuilder.Entity<NewsModel>().ToTable("News");
+        var newsBuilder = modelBuilder.Entity<News>().ToTable("News");
 
         newsBuilder.HasKey(n => n.Id);
         
