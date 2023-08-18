@@ -8,6 +8,7 @@ var appBuilder = WebApplication.CreateBuilder(args);
 
 appBuilder.Services
     .Configure<NewsOptions>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
+    .Configure<RegisterUserOptions>(appBuilder.Configuration.GetSection(ConfigConstants.RegisterUserSectionKey))
     .AddDbContext<CryptoBankDbContext>(options =>
         options.UseNpgsql(appBuilder.Configuration.GetNpgsqlConnectionString()))
     .AddEnhancedModules()

@@ -7,4 +7,5 @@ public static class ConfigConstants
     public const string DbPasswordConfigKey = "POSTGRES_PASSWORD";
 
     public const string NewsSectionKey = "News";
+    public const string RegisterUserSectionKey = "RegisterUser";
 }

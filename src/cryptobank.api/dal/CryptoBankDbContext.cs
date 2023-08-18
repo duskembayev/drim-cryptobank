@@ -37,7 +37,6 @@ public class CryptoBankDbContext : DbContext
 
         newsBuilder
             .Property(n => n.Date)
-            .HasColumnType("timestamp")
             .IsRequired();
 
         newsBuilder

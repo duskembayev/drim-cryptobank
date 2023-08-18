@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     [Route("register")]
     [HttpPost]
     public async Task<IActionResult> RegisterAsync(
-        [FromBody] RegisterUserModel model,
+        [FromBody] RegisterUserModel? model,
         CancellationToken cancellationToken)
     {
         if (model is null)
@@ -50,7 +50,7 @@ public class UserController : ControllerBase
             return BadRequest("Password is not strong enough");
 
         var dateOfBirth = model.DateOfBirth;
-        
+
         if (dateOfBirth > _timeProvider.Today.AddYears(-_options.Value.MinimumAge))
             return BadRequest("User must be at least 18 years old");
 
@@ -60,9 +60,10 @@ public class UserController : ControllerBase
             return Conflict("User already exists");
 
         var role = await GetRoleAsync(model, cancellationToken);
-        var passwordSalt = _passwordHashAlgorithm.GenerateSalt(_options.Value.PasswordSaltSize);
-        var passwordHash =
-            _passwordHashAlgorithm.ComputeHash(model.Password, passwordSalt, _options.Value.PasswordHashSize);
+        var passwordSalt = _passwordHashAlgorithm
+            .GenerateSalt(_options.Value.PasswordSaltSize);
+        var passwordHash = _passwordHashAlgorithm
+            .ComputeHash(model.Password, passwordSalt, _options.Value.PasswordHashSize);
 
         user = new User
         {
