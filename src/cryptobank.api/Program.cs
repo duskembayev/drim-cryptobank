@@ -12,11 +12,16 @@ appBuilder.Services
     .AddDbContext<CryptoBankDbContext>(options =>
         options.UseNpgsql(appBuilder.Configuration.GetNpgsqlConnectionString()))
     .AddEnhancedModules()
+    .AddSwaggerGen()
     .AddControllers();
 
 var app = appBuilder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.MapControllers();
+app.MapSwagger();
 
 await app.RestoreDatabaseAsync(500);
 await app.RunAsync();

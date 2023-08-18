@@ -8,9 +8,9 @@ internal static class ConfigurationExtensions
     public static string GetNpgsqlConnectionString(this IConfiguration @this)
     {
         var baseConnectionString = @this.GetConnectionString(ConfigConstants.DbConnectionStringName);
-        var dbStringBuilder = new NpgsqlConnectionStringBuilder(baseConnectionString);
         var dbHost = @this.GetValue<string>(ConfigConstants.DbHostConfigKey);
         var dbPassword = @this.GetValue<string>(ConfigConstants.DbPasswordConfigKey);
+        var dbStringBuilder = new NpgsqlConnectionStringBuilder(baseConnectionString);
 
         if (!string.IsNullOrEmpty(dbHost))
             dbStringBuilder.Host = dbHost;
