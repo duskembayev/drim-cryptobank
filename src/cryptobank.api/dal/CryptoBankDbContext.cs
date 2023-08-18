@@ -76,7 +76,6 @@ public class CryptoBankDbContext : DbContext
 
         userBuilder
             .Property(u => u.DateOfRegistration)
-            .HasColumnType("timestamp")
             .IsRequired();
 
         userBuilder

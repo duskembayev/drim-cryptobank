@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace cryptobank.api.dal.news;
 
 [ContainerEntry(ServiceLifetime.Scoped, typeof(INewsRepository))]
-public sealed class NewsRepository : INewsRepository
+internal sealed class NewsRepository : INewsRepository
 {
     private readonly CryptoBankDbContext _dbContext;
 
