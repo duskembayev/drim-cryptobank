@@ -1,7 +1,8 @@
 ﻿using Enhanced.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace cryptobank.api.dal.users;
+namespace cryptobank.dal.users;
 
 [ContainerEntry(ServiceLifetime.Scoped, typeof(IUserRepository))]
 internal sealed class UserRepository : IUserRepository

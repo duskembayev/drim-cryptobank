@@ -1,4 +1,4 @@
-﻿namespace cryptobank.api.dal.news;
+﻿namespace cryptobank.dal.news;
 
 public interface INewsRepository
 {

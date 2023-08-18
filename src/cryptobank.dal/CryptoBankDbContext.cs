@@ -1,10 +1,10 @@
-﻿using cryptobank.api.dal.news;
-using cryptobank.api.dal.users;
+﻿using cryptobank.dal.news;
+using cryptobank.dal.users;
 using Microsoft.EntityFrameworkCore;
 
-namespace cryptobank.api.dal;
+namespace cryptobank.dal;
 
-public class CryptoBankDbContext : DbContext
+internal class CryptoBankDbContext : DbContext
 {
     public CryptoBankDbContext(DbContextOptions<CryptoBankDbContext> dbContextOptions) : base(dbContextOptions)
     {

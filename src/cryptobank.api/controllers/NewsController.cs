@@ -1,6 +1,6 @@
 ﻿using cryptobank.api.config;
-using cryptobank.api.dal.news;
 using cryptobank.api.dto;
+using cryptobank.dal.news;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

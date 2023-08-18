@@ -1,9 +1,9 @@
-﻿using cryptobank.api.dal.news;
-using cryptobank.api.dal.users;
+﻿using cryptobank.dal.news;
+using cryptobank.dal.users;
 
-namespace cryptobank.api.dal;
+namespace cryptobank.dal;
 
-public static class PredefinedDataSeed
+internal static class PredefinedDataSeed
 {
     public static async Task ApplyReferencesAsync(this CryptoBankDbContext dbContext)
     {
@@ -18,11 +18,8 @@ public static class PredefinedDataSeed
         await dbContext.SaveChangesAsync();
     }
 
-    public static async Task ApplySamplesAsync(this CryptoBankDbContext dbContext, IWebHostEnvironment env)
+    public static async Task ApplySamplesAsync(this CryptoBankDbContext dbContext)
     {
-        if (!env.IsDevelopment())
-            return;
-
         dbContext.News.Add(new News
         {
             Id = "1EE9D164-883D-4E05-AF8D-1A541A6E5D92",

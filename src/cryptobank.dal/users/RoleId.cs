@@ -1,4 +1,4 @@
-﻿namespace cryptobank.api.dal.users;
+﻿namespace cryptobank.dal.users;
 
 [Flags]
 public enum RoleId

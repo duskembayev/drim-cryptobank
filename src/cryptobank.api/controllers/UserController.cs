@@ -1,8 +1,8 @@
 ﻿using cryptobank.api.config;
-using cryptobank.api.dal.users;
 using cryptobank.api.dto;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
+using cryptobank.dal.users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

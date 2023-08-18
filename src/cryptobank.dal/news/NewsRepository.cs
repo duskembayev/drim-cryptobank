@@ -1,7 +1,8 @@
 ﻿using Enhanced.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace cryptobank.api.dal.news;
+namespace cryptobank.dal.news;
 
 [ContainerEntry(ServiceLifetime.Scoped, typeof(INewsRepository))]
 internal sealed class NewsRepository : INewsRepository

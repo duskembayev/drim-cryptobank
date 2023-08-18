@@ -1,4 +1,4 @@
-﻿using cryptobank.api.dal.news;
+﻿using cryptobank.dal.news;
 using Enhanced.DependencyInjection;
 
 namespace cryptobank.api.dto;
