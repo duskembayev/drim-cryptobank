@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.15.0" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cryptobank.dal\cryptobank.dal.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dto\" />
   </ItemGroup>
 </Project>

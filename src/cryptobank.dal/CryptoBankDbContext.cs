@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cryptobank.dal;
 
-internal class CryptoBankDbContext : DbContext
+public class CryptoBankDbContext : DbContext
 {
     public CryptoBankDbContext(DbContextOptions<CryptoBankDbContext> dbContextOptions) : base(dbContextOptions)
     {
