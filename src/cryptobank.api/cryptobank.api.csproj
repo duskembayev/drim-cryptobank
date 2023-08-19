@@ -7,7 +7,4 @@
   <ItemGroup>
     <ProjectReference Include="..\cryptobank.dal\cryptobank.dal.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="dto\" />
-  </ItemGroup>
 </Project>

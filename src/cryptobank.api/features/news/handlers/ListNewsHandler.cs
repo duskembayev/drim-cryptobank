@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cryptobank.api.features.news.handlers;
 
-[ContainerEntry(ServiceLifetime.Transient, typeof(IRequestHandler<ListNewsRequest, IReadOnlyCollection<NewsModel>>))]
 public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollection<NewsModel>>
 {
     private readonly CryptoBankDbContext _dbContext;
@@ -15,7 +14,8 @@ public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollect
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyCollection<NewsModel>> Handle(ListNewsRequest request,
+    public async Task<IReadOnlyCollection<NewsModel>> Handle(
+        ListNewsRequest request,
         CancellationToken cancellationToken)
     {
         return await _dbContext.News

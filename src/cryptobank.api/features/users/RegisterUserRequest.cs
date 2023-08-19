@@ -1,6 +1,9 @@
-﻿namespace cryptobank.api.dto;
+﻿using cryptobank.dal.users;
+using MediatR;
 
-public class RegisterUserModel
+namespace cryptobank.api.features.users;
+
+public class RegisterUserRequest : IRequest<User>
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;

@@ -2,16 +2,10 @@
 
 public class User
 {
-    private readonly string _email = string.Empty;
+    private readonly List<Role> _roles = new();
 
     public int Id { get; init; }
-
-    public string Email
-    {
-        get => _email;
-        init => _email = value.ToLowerInvariant();
-    }
-
+    public string Email{ get; init; } = string.Empty;
     public byte[] PasswordHash { get; init; } = Array.Empty<byte>();
     public byte[] PasswordSalt { get; init; } = Array.Empty<byte>();
     public DateOnly DateOfBirth { get; init; } = DateOnly.MinValue;
@@ -21,7 +15,7 @@ public class User
         get => Roles.Aggregate(RoleId.None, (current, role) => current | (RoleId) role.Id);
         init
         {
-            Roles.Clear();
+            _roles.Clear();
 
             var roleIds = Enum.GetValues<RoleId>();
 
@@ -31,10 +25,10 @@ public class User
                     continue;
 
                 if (value.HasFlag(roleId))
-                    Roles.Add(new Role {Id = (int) value, Name = value.ToString("G")});
+                    _roles.Add(new Role {Id = (int) value, Name = value.ToString("G")});
             }
         }
     }
 
-    internal List<Role> Roles { get; } = new();
+    public IReadOnlyList<Role> Roles => _roles;
 }

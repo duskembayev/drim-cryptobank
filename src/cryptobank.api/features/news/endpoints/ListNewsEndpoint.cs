@@ -19,6 +19,7 @@ public class ListNewsEndpoint : EndpointWithoutRequest<IReadOnlyCollection<NewsM
     public override void Configure()
     {
         Get("/news");
+        AllowAnonymous();
     }
 
     public override async Task<IReadOnlyCollection<NewsModel>> ExecuteAsync(CancellationToken ct)
