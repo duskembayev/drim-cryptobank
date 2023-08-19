@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using cryptobank.api;
 using cryptobank.api.config;
 using cryptobank.api.Enhanced.DependencyInjection;
+using cryptobank.api.features.news.config;
 using cryptobank.api.middlewares;
 using cryptobank.dal;
 using FastEndpoints;

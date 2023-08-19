@@ -1,4 +1,4 @@
-﻿namespace cryptobank.api.config;
+﻿namespace cryptobank.api;
 
 public static class ConfigConstants
 {
