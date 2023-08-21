@@ -16,10 +16,17 @@ services:
       REGISTERUSER:FALLBACKADMINEMAIL: "admin@example.com"
 
   db:
-    image: postgres:latest
+    image: postgres:alpine
     ports:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: "fh6Dj01s"
       POSTGRES_USER: "postgres"
       POSTGRES_DB: "cryptobank"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: "gj3rUcvs2"
