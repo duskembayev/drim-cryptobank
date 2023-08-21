@@ -1,15 +1,15 @@
-﻿using cryptobank.api.features.users.config;
+﻿using cryptobank.api.features.news.config;
 
 namespace cryptobank.api.features.news;
 
 public static class SetupExtensions
 {
-    private const string RegisterUserSectionKey = "RegisterUser";
+    private const string NewsSectionKey = "News";
     
-    public static WebApplicationBuilder AddNews(this WebApplicationBuilder @this)
+    public static WebApplicationBuilder AddUsers(this WebApplicationBuilder @this)
     {
         @this.Services
-            .Configure<RegisterUserOptions>(@this.Configuration.GetSection(RegisterUserSectionKey));
+            .Configure<NewsOptions>(@this.Configuration.GetSection(NewsSectionKey));
 
         return @this;
     }
