@@ -1,4 +1,3 @@
-using cryptobank.api.config;
 using cryptobank.api.features.news.config;
 using FastEndpoints;
 using MediatR;

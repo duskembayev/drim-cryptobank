@@ -1,4 +1,4 @@
-﻿using cryptobank.api.config;
+﻿using cryptobank.api.features.users.config;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
 using FastEndpoints;

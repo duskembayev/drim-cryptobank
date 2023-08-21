@@ -1,8 +1,8 @@
-﻿using cryptobank.api.config;
+﻿using cryptobank.api.db;
+using cryptobank.api.features.users.config;
+using cryptobank.api.features.users.domain;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
-using cryptobank.dal;
-using cryptobank.dal.users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -32,10 +32,10 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
     {
         var email = request.Email.ToLowerInvariant();
 
-        if (await _dbContext.Users.AnyAsync(u => u.Email == request.Email, cancellationToken))
+        if (await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
             throw new ApplicationException("User already exists");
 
-        var role = await GetRoleAsync(request, cancellationToken);
+        var role = await GetRoleAsync(email, cancellationToken);
 
         var passwordSalt = _passwordHashAlgorithm
             .GenerateSalt(_options.Value.PasswordSaltSize);
@@ -45,33 +45,30 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
         var user = new User
         {
             Email = email,
-            Role = role,
             PasswordSalt = passwordSalt,
             PasswordHash = passwordHash,
             DateOfBirth = request.DateOfBirth,
-            DateOfRegistration = _timeProvider.UtcNow
+            DateOfRegistration = _timeProvider.UtcNow,
+            Roles = { role }
         };
 
         _dbContext.AttachRange(user.Roles);
-
         await _dbContext.AddAsync(user, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return user;
     }
 
-    private async Task<RoleId> GetRoleAsync(RegisterUserRequest request, CancellationToken cancellationToken)
+    private async Task<Role> GetRoleAsync(string email, CancellationToken cancellationToken)
     {
-        if (request.Email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase))
-        {
-            const int adminRoleId = (int) RoleId.Administrator;
+        const int adminRoleId = (int) Roles.Administrator;
 
-            if (await _dbContext.Users
-                    .Include(user => user.Roles)
-                    .AnyAsync(user => user.Roles.Any(role => role.Id == adminRoleId), cancellationToken))
-                return RoleId.Administrator;
-        }
+        if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
+            && await _dbContext.Users
+                .Include(user => user.Roles)
+                .AnyAsync(user => user.Roles.Any(role => role.Id == adminRoleId), cancellationToken))
+            return new Role(Roles.Administrator);
 
-        return RoleId.User;
+        return new Role(Roles.User);
     }
 }

@@ -1,4 +1,4 @@
-﻿using cryptobank.dal.users;
+﻿using cryptobank.api.features.users.domain;
 using MediatR;
 
 namespace cryptobank.api.features.users;

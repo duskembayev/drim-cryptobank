@@ -1,8 +1,8 @@
-﻿using cryptobank.dal.news;
-using cryptobank.dal.users;
+﻿using cryptobank.api.features.news.domain;
+using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace cryptobank.dal;
+namespace cryptobank.api.db;
 
 public class CryptoBankDbContext : DbContext
 {
@@ -12,7 +12,7 @@ public class CryptoBankDbContext : DbContext
 
     public DbSet<News> News { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
-    internal DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,7 +78,6 @@ public class CryptoBankDbContext : DbContext
             .IsRequired();
 
         userBuilder
-            .Ignore(u => u.Role)
             .HasMany(u => u.Roles)
             .WithMany()
             .UsingEntity("UserRole");
