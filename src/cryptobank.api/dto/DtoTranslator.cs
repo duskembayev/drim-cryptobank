@@ -1,4 +1,4 @@
-﻿using cryptobank.api.dal.news;
+﻿using cryptobank.dal.news;
 using Enhanced.DependencyInjection;
 
 namespace cryptobank.api.dto;
@@ -6,5 +6,5 @@ namespace cryptobank.api.dto;
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IDtoTranslator))]
 public sealed class DtoTranslator : IDtoTranslator
 {
-    public News Translate(NewsModel model) => new(model.Title, model.Content, model.Date, model.Author);
+    public NewsModel Translate(News news) => new(news.Title, news.Content, news.Date, news.Author);
 }

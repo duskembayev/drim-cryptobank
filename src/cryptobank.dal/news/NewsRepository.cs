@@ -1,10 +1,11 @@
 ﻿using Enhanced.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace cryptobank.api.dal.news;
+namespace cryptobank.dal.news;
 
 [ContainerEntry(ServiceLifetime.Scoped, typeof(INewsRepository))]
-public sealed class NewsRepository : INewsRepository
+internal sealed class NewsRepository : INewsRepository
 {
     private readonly CryptoBankDbContext _dbContext;
 
@@ -13,7 +14,7 @@ public sealed class NewsRepository : INewsRepository
         _dbContext = dbContext;
     }
     
-    public async Task<IReadOnlyList<NewsModel>> ListAsync(int count, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<News>> ListAsync(int count, CancellationToken cancellationToken = default)
     {
         return await _dbContext.News
             .OrderByDescending(n => n.Date)

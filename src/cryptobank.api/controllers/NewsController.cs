@@ -1,11 +1,12 @@
 ﻿using cryptobank.api.config;
-using cryptobank.api.dal.news;
 using cryptobank.api.dto;
+using cryptobank.dal.news;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace cryptobank.api.controllers;
 
+[Route("news")]
 public class NewsController : ControllerBase
 {
     private readonly INewsRepository _repository;
@@ -20,7 +21,6 @@ public class NewsController : ControllerBase
     }
     
     [HttpGet]
-    [Route("news")]
     public async Task<IActionResult> GetNewsAsync(CancellationToken cancellationToken)
     {
         var models = await _repository.ListAsync(_options.Value.ListingCapacity, cancellationToken);

@@ -13,6 +13,7 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
       POSTGRES_PASSWORD: "fh6Dj01s"
       POSTGRES_HOST: "db"
+      REGISTERUSER:FALLBACKADMINEMAIL: "admin@example.com"
 
   db:
     image: postgres:latest

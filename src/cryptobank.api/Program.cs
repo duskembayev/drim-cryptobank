@@ -1,21 +1,27 @@
 ﻿using cryptobank.api.config;
-using cryptobank.api.dal;
 using cryptobank.api.Enhanced.DependencyInjection;
-using cryptobank.api.utils;
-using Microsoft.EntityFrameworkCore;
+using cryptobank.dal;
 
 var appBuilder = WebApplication.CreateBuilder(args);
 
 appBuilder.Services
     .Configure<NewsOptions>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
-    .AddDbContext<CryptoBankDbContext>(options =>
-        options.UseNpgsql(appBuilder.Configuration.GetNpgsqlConnectionString()))
+    .Configure<RegisterUserOptions>(appBuilder.Configuration.GetSection(ConfigConstants.RegisterUserSectionKey))
+    .AddSwaggerGen()
     .AddEnhancedModules()
+    .AddDbContext(appBuilder.Configuration)
     .AddControllers();
 
 var app = appBuilder.Build();
 
-app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 
-await app.RestoreDatabaseAsync(500);
+app.MapControllers();
+app.MapSwagger();
+
+await app.Services.RestoreDatabaseAsync(
+    500,
+    app.Environment.IsDevelopment());
+
 await app.RunAsync();
