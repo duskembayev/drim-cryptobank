@@ -14,9 +14,14 @@ public class RedisConnection : IRedisConnection, IHostedService, IHealthCheck
     {
         _configuration = configuration;
     }
-    
-    public IDatabase Database => _connectionMultiplexer?.GetDatabase() ??
-                                 throw new InvalidOperationException("Redis connection not initialized");
+
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
+    {
+        if (_connectionMultiplexer is { IsConnected: true })
+            return Task.FromResult(HealthCheckResult.Healthy());
+
+        return Task.FromResult(HealthCheckResult.Unhealthy());
+    }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -36,11 +41,9 @@ public class RedisConnection : IRedisConnection, IHostedService, IHealthCheck
         }
     }
 
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-    {
-        if (_connectionMultiplexer is {IsConnected: true})
-            return Task.FromResult(HealthCheckResult.Healthy());
+    public IDatabase Database => _connectionMultiplexer?.GetDatabase()
+                                 ?? throw new InvalidOperationException("Redis connection not initialized");
 
-        return Task.FromResult(HealthCheckResult.Unhealthy());
-    }
+    public IServer Server => _connectionMultiplexer?.GetServers().Single()
+                             ?? throw new InvalidOperationException("Redis connection not initialized");
 }
