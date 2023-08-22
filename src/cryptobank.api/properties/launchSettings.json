@@ -6,6 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "CONNECTIONSTRINGS:POSTGRES": "Server=localhost;Port=5432;Database=cryptobank;User Id=postgres;Password=fh6Dj01s",
+        "CONNECTIONSTRINGS:REDIS": "localhost:6379,password=gj3rUcvs2"
       }
     }
   }
