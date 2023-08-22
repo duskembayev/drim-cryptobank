@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Include="Enhanced.DependencyInjection" Version="1.0.1" />
     <PackageReference Include="FastEndpoints" Version="5.15.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="5.15.0" />
     <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.32.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
