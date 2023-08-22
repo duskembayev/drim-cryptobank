@@ -2,7 +2,7 @@
 
 public static class SetupExtensions
 {
-    private const string ConnectionStringName = "cryptobank";
+    private const string ConnectionStringName = "postgres";
 
     public static async Task RestoreDatabaseAsync(this WebApplication @this, int dbWarmupTimeout)
     {
