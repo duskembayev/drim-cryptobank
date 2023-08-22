@@ -35,14 +35,14 @@ public class AccessTokenHandler : AuthenticationHandler<AccessTokenOptions>
 
         var validationParameters = GetTokenValidationParameters();
         var validationResult = _jsonWebTokenHandler.ValidateToken(token, validationParameters);
-        var claimsPrincipal = new ClaimsPrincipal(validationResult.ClaimsIdentity);
 
         if (!validationResult.IsValid)
             return Task.FromResult(AuthenticateResult.Fail("Invalid access token"));
 
+        var claimsPrincipal = new ClaimsPrincipal(validationResult.ClaimsIdentity);
         return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
     }
-
+    
     private TokenValidationParameters GetTokenValidationParameters()
     {
         return new TokenValidationParameters
@@ -54,10 +54,12 @@ public class AccessTokenHandler : AuthenticationHandler<AccessTokenOptions>
             ValidAudience = Options.Audience,
             ValidIssuer = Options.ClaimsIssuer,
             IssuerSigningKey = Options.GetSecurityKey(),
-            AuthenticationType = AccessTokenConstants.Bearer,
             RequireAudience = true,
             RequireExpirationTime = true,
-            RequireSignedTokens = true
+            RequireSignedTokens = true,
+            AuthenticationType = AccessTokenConstants.Bearer,
+            RoleClaimType = AccessTokenConstants.ClaimsTypes.Role,
+            NameClaimType = AccessTokenConstants.ClaimsTypes.Email
         };
     }
 }

@@ -49,13 +49,16 @@ public class AccessTokenProvider : IAccessTokenProvider
 
     private static ClaimsIdentity GetClaims(User user)
     {
-        var claims = new ClaimsIdentity(AccessTokenConstants.Bearer);
+        var claims = new ClaimsIdentity(
+            AccessTokenConstants.Bearer,
+            AccessTokenConstants.ClaimsTypes.Email,
+            AccessTokenConstants.ClaimsTypes.Role);
 
-        claims.AddClaim(new Claim("id", user.Id.ToString()));
-        claims.AddClaim(new Claim("email", user.Email));
+        claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Id, user.Id.ToString()));
+        claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Email, user.Email));
 
         foreach (var role in user.Roles)
-            claims.AddClaim(new Claim("roles", role.Name));
+            claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Role, role.Name));
 
         return claims;
     }
