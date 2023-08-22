@@ -1,5 +1,4 @@
 ﻿using cryptobank.api.features.news.domain;
-using cryptobank.api.features.users;
 using cryptobank.api.features.users.domain;
 
 namespace cryptobank.api.db;
@@ -8,13 +7,9 @@ internal static class PredefinedDataSeed
 {
     public static async Task ApplyReferencesAsync(this CryptoBankDbContext dbContext)
     {
-        foreach (var roleId in Enum.GetValues<Roles>().Where(id => id is not Roles.None))
-            dbContext.Roles.Add(
-                new Role
-                {
-                    Id = (int) roleId,
-                    Name = roleId.ToString("G")
-                });
+        dbContext.Roles.Add(Role.Detached.User);
+        dbContext.Roles.Add(Role.Detached.Analyst);
+        dbContext.Roles.Add(Role.Detached.Administrator);
 
         await dbContext.SaveChangesAsync();
     }

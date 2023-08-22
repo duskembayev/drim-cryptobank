@@ -1,4 +1,5 @@
-﻿using cryptobank.api.features.users.config;
+﻿using cryptobank.api.core;
+using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
@@ -45,7 +46,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
             PasswordHash = passwordHash,
             DateOfBirth = request.DateOfBirth,
             DateOfRegistration = _timeProvider.UtcNow,
-            Roles = { role }
+            Roles = {role}
         };
 
         _dbContext.AttachRange(user.Roles);
@@ -57,14 +58,12 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
 
     private async Task<Role> GetRoleAsync(string email, CancellationToken cancellationToken)
     {
-        const int adminRoleId = (int) Roles.Administrator;
-
         if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
             && !await _dbContext.Users
                 .Include(user => user.Roles)
-                .AnyAsync(user => user.Roles.Any(role => role.Id == adminRoleId), cancellationToken))
-            return new Role(Roles.Administrator);
+                .AnyAsync(user => user.Roles.Any(role => role.Id == ApplicationRole.AdministratorRoleId), cancellationToken))
+            return Role.Detached.Administrator;
 
-        return new Role(Roles.User);
+        return Role.Detached.User;
     }
 }
