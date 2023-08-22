@@ -5,8 +5,8 @@ namespace cryptobank.api.features.users;
 
 public static class SetupExtensions
 {
-    private const string RegisterUserSectionKey = "RegisterUser";
-    private const string AccessTokenSectionKey = "AccessToken";
+    private const string RegisterUserSectionKey = "Features:Users:RegisterUser";
+    private const string AccessTokenSectionKey = "Features:Users:AccessToken";
 
     public static WebApplicationBuilder AddUsers(this WebApplicationBuilder @this)
     {

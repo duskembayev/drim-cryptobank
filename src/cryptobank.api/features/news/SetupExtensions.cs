@@ -4,7 +4,7 @@ namespace cryptobank.api.features.news;
 
 public static class SetupExtensions
 {
-    private const string NewsSectionKey = "News";
+    private const string NewsSectionKey = "Features:News";
     
     public static WebApplicationBuilder AddNews(this WebApplicationBuilder @this)
     {

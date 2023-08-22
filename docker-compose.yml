@@ -11,9 +11,7 @@ services:
       - db
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      POSTGRES_PASSWORD: "fh6Dj01s"
-      POSTGRES_HOST: "db"
-      REGISTERUSER:FALLBACKADMINEMAIL: "admin@example.com"
+      CONNECTIONSTRINGS:CRYPTOBANK: "Server=db;Port=5432;Database=cryptobank;User Id=postgres;Password=fh6Dj01s"
 
   db:
     image: postgres:alpine
