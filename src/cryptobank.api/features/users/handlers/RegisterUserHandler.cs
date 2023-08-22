@@ -60,7 +60,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
         const int adminRoleId = (int) Roles.Administrator;
 
         if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
-            && await _dbContext.Users
+            && !await _dbContext.Users
                 .Include(user => user.Roles)
                 .AnyAsync(user => user.Roles.Any(role => role.Id == adminRoleId), cancellationToken))
             return new Role(Roles.Administrator);
