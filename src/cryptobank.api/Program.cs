@@ -12,13 +12,15 @@ appBuilder
 
 appBuilder.Services
     .AddEnhancedModules()
-    .AddFastEndpoints() 
+    .AddFastEndpoints()
     .AddMediatR(configuration => configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
     .AddDbContext(appBuilder.Configuration);
 
 var app = appBuilder.Build();
 
 app.UseMiddleware<ApplicationExceptionMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseFastEndpoints();
 
 await app.RestoreDatabaseAsync(500);
