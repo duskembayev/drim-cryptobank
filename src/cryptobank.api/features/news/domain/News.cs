@@ -1,4 +1,4 @@
-﻿namespace cryptobank.dal.news;
+﻿namespace cryptobank.api.features.news.domain;
 
 public class News
 {

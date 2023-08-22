@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace cryptobank.dal;
+namespace cryptobank.api.db;
 
 public static class SetupExtensions
 {
-    public static async Task RestoreDatabaseAsync(this IServiceProvider @this, int dbWarmupTimeout, bool withSamples)
+    public static async Task RestoreDatabaseAsync(this WebApplication @this, int dbWarmupTimeout)
     {
         await Task.Delay(dbWarmupTimeout);
 
-        using var serviceScope = @this.CreateScope();
+        using var serviceScope = @this.Services.CreateScope();
 
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
 
@@ -19,7 +17,7 @@ public static class SetupExtensions
         {
             await dbContext.ApplyReferencesAsync();
 
-            if (withSamples)
+            if (@this.Environment.IsDevelopment())
                 await dbContext.ApplySamplesAsync();
 
             return;

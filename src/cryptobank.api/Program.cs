@@ -1,27 +1,27 @@
-﻿using cryptobank.api.config;
+﻿using System.Reflection;
+using cryptobank.api.db;
 using cryptobank.api.Enhanced.DependencyInjection;
-using cryptobank.dal;
+using cryptobank.api.features.news;
+using cryptobank.api.features.users;
+using cryptobank.api.middlewares;
+using FastEndpoints;
 
 var appBuilder = WebApplication.CreateBuilder(args);
 
+appBuilder
+    .AddNews()
+    .AddUsers();
+
 appBuilder.Services
-    .Configure<NewsOptions>(appBuilder.Configuration.GetSection(ConfigConstants.NewsSectionKey))
-    .Configure<RegisterUserOptions>(appBuilder.Configuration.GetSection(ConfigConstants.RegisterUserSectionKey))
-    .AddSwaggerGen()
     .AddEnhancedModules()
-    .AddDbContext(appBuilder.Configuration)
-    .AddControllers();
+    .AddFastEndpoints() 
+    .AddMediatR(configuration => configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
+    .AddDbContext(appBuilder.Configuration);
 
 var app = appBuilder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseMiddleware<ApplicationExceptionMiddleware>();
+app.UseFastEndpoints();
 
-app.MapControllers();
-app.MapSwagger();
-
-await app.Services.RestoreDatabaseAsync(
-    500,
-    app.Environment.IsDevelopment());
-
+await app.RestoreDatabaseAsync(500);
 await app.RunAsync();

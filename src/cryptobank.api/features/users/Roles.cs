@@ -1,7 +1,7 @@
-﻿namespace cryptobank.dal.users;
+﻿namespace cryptobank.api.features.users;
 
 [Flags]
-public enum RoleId
+public enum Roles
 {
     None = 0,
     User = 1 << 0,

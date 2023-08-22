@@ -1,102 +1,114 @@
-﻿using cryptobank.dal.news;
-using cryptobank.dal.users;
+﻿using cryptobank.api.features.news.domain;
+using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace cryptobank.dal;
+namespace cryptobank.api.db;
 
-internal class CryptoBankDbContext : DbContext
+public class CryptoBankDbContext : DbContext
 {
-    public CryptoBankDbContext(DbContextOptions<CryptoBankDbContext> dbContextOptions) : base(dbContextOptions)
+    public CryptoBankDbContext(DbContextOptions<CryptoBankDbContext> dbContextOptions)
+        : base(dbContextOptions)
     {
     }
 
     public DbSet<News> News { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
-    internal DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var newsBuilder = modelBuilder.Entity<News>().ToTable("News");
+        modelBuilder
+            .Entity<News>(BuildNews)
+            .Entity<User>(BuildUser)
+            .Entity<Role>(BuildRole);
+    }
 
-        newsBuilder.HasKey(n => n.Id);
+    private static void BuildNews(EntityTypeBuilder<News> builder)
+    {
+        builder.ToTable("News");
+        builder.HasKey(n => n.Id);
 
-        newsBuilder
+        builder
             .Property(n => n.Id)
             .IsRequired()
             .HasMaxLength(36);
 
-        newsBuilder
+        builder
             .Property(n => n.Title)
             .IsRequired()
             .HasMaxLength(500);
 
-        newsBuilder
+        builder
             .Property(n => n.Content)
             .HasColumnType("text")
             .IsRequired();
 
-        newsBuilder
+        builder
             .Property(n => n.Date)
             .IsRequired();
 
-        newsBuilder
+        builder
             .Property(n => n.Author)
             .IsRequired()
             .HasMaxLength(100);
+    }
 
-        var userBuilder = modelBuilder.Entity<User>().ToTable("User");
+    private static void BuildUser(EntityTypeBuilder<User> builder)
+    {
+        builder.ToTable("User");
+        builder.HasKey(u => u.Id);
 
-        userBuilder.HasKey(u => u.Id);
-
-        userBuilder
+        builder
             .Property(u => u.Id)
             .IsRequired()
             .ValueGeneratedOnAdd();
 
-        userBuilder
+        builder
             .Property(u => u.Email)
             .IsRequired()
             .HasMaxLength(200);
 
-        userBuilder
+        builder
             .Property(u => u.PasswordHash)
             .IsRequired()
             .HasMaxLength(256);
 
-        userBuilder
+        builder
             .Property(u => u.PasswordSalt)
             .IsRequired()
             .HasMaxLength(256);
 
-        userBuilder
+        builder
             .Property(u => u.DateOfBirth)
             .HasColumnType("date")
             .IsRequired();
 
-        userBuilder
+        builder
             .Property(u => u.DateOfRegistration)
             .IsRequired();
 
-        userBuilder
-            .Ignore(u => u.Role)
+        builder
             .HasMany(u => u.Roles)
             .WithMany()
             .UsingEntity("UserRole");
 
-        userBuilder
+        builder
             .HasIndex(u => u.Email)
             .IsUnique();
+    }
 
-        var roleBuilder = modelBuilder.Entity<Role>().ToTable("Role");
+    private static void BuildRole(EntityTypeBuilder<Role> builder)
+    {
+        builder.ToTable("Role");
+        builder.HasKey(r => r.Id);
 
-        roleBuilder.HasKey(r => r.Id);
-
-        roleBuilder
+        builder
             .Property(r => r.Id)
             .ValueGeneratedNever()
             .IsRequired();
 
-        roleBuilder
+        builder
             .Property(r => r.Name)
             .IsRequired()
             .HasMaxLength(50);

@@ -1,4 +1,4 @@
-namespace cryptobank.dal;
+namespace cryptobank.api.db;
 
 internal class DbConfigConstants
 {
