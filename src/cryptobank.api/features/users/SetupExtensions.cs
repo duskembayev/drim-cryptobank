@@ -1,6 +1,5 @@
 ﻿using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -24,7 +23,7 @@ public static class SetupExtensions
             .AddAuthorization(ConfigureAuthorization)
             .AddAuthentication()
             .AddScheme<AccessTokenOptions, AccessTokenHandler>(AuthenticationScheme, null);
-        
+
         return @this;
     }
 
