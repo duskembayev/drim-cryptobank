@@ -6,7 +6,7 @@ public static class SetupExtensions
 {
     private const string NewsSectionKey = "News";
     
-    public static WebApplicationBuilder AddUsers(this WebApplicationBuilder @this)
+    public static WebApplicationBuilder AddNews(this WebApplicationBuilder @this)
     {
         @this.Services
             .Configure<NewsOptions>(@this.Configuration.GetSection(NewsSectionKey));

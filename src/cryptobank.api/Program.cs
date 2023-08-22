@@ -9,8 +9,8 @@ using FastEndpoints;
 var appBuilder = WebApplication.CreateBuilder(args);
 
 appBuilder
-    .AddNews()
-    .AddUsers();
+    .AddUsers()
+    .AddNews();
 
 appBuilder.Services
     .AddEnhancedModules()

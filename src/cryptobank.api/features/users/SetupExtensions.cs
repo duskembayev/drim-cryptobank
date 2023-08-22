@@ -8,7 +8,7 @@ public static class SetupExtensions
     private const string RegisterUserSectionKey = "RegisterUser";
     private const string AccessTokenSectionKey = "AccessToken";
 
-    public static WebApplicationBuilder AddNews(this WebApplicationBuilder @this)
+    public static WebApplicationBuilder AddUsers(this WebApplicationBuilder @this)
     {
         @this.Services
             .Configure<RegisterUserOptions>(@this.Configuration.GetSection(RegisterUserSectionKey))
