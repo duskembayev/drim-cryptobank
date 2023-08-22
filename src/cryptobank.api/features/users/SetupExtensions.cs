@@ -17,11 +17,13 @@ public static class SetupExtensions
         @this.Services
             .Configure<RegisterUserOptions>(@this.Configuration.GetSection(RegisterUserSectionKey))
             .Configure<AccessTokenOptions>(@this.Configuration.GetSection(AccessTokenSectionKey))
+            .Configure<AccessTokenOptions>(AuthenticationScheme, @this.Configuration.GetSection(AccessTokenSectionKey))
             .AddSingleton<JsonWebTokenHandler>();
 
-          @this.Services
-              .AddAuthorization(ConfigureAuthorization)
-              .AddAuthentication(ConfigureAuthentication);
+        @this.Services
+            .AddAuthorization(ConfigureAuthorization)
+            .AddAuthentication()
+            .AddScheme<AccessTokenOptions, AccessTokenHandler>(AuthenticationScheme, null);
         
         return @this;
     }
@@ -34,11 +36,5 @@ public static class SetupExtensions
             .Build();
 
         options.DefaultPolicy = defaultPolicy;
-    }
-
-    private static void ConfigureAuthentication(AuthenticationOptions options)
-    {
-        options.AddScheme<AccessTokenHandler>(AuthenticationScheme, null);
-        options.DefaultScheme = AuthenticationScheme;
     }
 }
