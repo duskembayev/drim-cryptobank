@@ -36,7 +36,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
 
         return new TokenResponse
         {
-            AccessToken = await _accessTokenProvider.IssueAsync(user, cancellationToken)
+            AccessToken = _accessTokenProvider.Issue(user)
         };
     }
 }

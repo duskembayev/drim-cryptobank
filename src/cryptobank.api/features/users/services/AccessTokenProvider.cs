@@ -29,7 +29,7 @@ public class AccessTokenProvider : IAccessTokenProvider
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.SecurityKey));
     }
 
-    public Task<string> IssueAsync(User user, CancellationToken cancellationToken)
+    public string Issue(User user)
     {
         var utcNow = _timeProvider.UtcNow;
 
@@ -44,8 +44,7 @@ public class AccessTokenProvider : IAccessTokenProvider
             SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithm),
         };
 
-        var token = _jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
-        return Task.FromResult(token);
+        return _jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
     }
 
     private static ClaimsIdentity GetClaims(User user)

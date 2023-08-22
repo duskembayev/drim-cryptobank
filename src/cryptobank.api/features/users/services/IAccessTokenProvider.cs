@@ -4,5 +4,5 @@ namespace cryptobank.api.features.users.services;
 
 public interface IAccessTokenProvider
 {
-    Task<string> IssueAsync(User user, CancellationToken cancellationToken);
+    string Issue(User user);
 }
