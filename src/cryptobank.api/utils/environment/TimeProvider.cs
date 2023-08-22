@@ -1,6 +1,4 @@
-﻿using Enhanced.DependencyInjection;
-
-namespace cryptobank.api.utils.environment;
+﻿namespace cryptobank.api.utils.environment;
 
 [ContainerEntry(ServiceLifetime.Singleton, typeof(ITimeProvider))]
 internal sealed class TimeProvider : ITimeProvider

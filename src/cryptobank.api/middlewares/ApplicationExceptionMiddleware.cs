@@ -1,6 +1,4 @@
 ﻿using System.Security;
-using Enhanced.DependencyInjection;
-using FastEndpoints;
 
 namespace cryptobank.api.middlewares;
 

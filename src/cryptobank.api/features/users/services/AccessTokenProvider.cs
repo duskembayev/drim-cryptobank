@@ -1,10 +1,7 @@
 ﻿using System.Security.Claims;
-using System.Text;
 using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.utils.environment;
-using Enhanced.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 

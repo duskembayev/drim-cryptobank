@@ -1,7 +1,4 @@
-﻿using FastEndpoints;
-using FluentValidation;
-
-namespace cryptobank.api.features.users.validators;
+﻿namespace cryptobank.api.features.users.validators;
 
 public class LoginUserValidator : Validator<LoginUserRequest>
 {

@@ -1,11 +1,7 @@
-﻿using cryptobank.api.db;
-using cryptobank.api.features.users.config;
+﻿using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace cryptobank.api.features.users.handlers;
 

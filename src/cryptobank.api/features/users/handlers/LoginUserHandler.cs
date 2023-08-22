@@ -1,9 +1,6 @@
 ﻿using System.Security;
-using cryptobank.api.db;
 using cryptobank.api.features.users.services;
 using cryptobank.api.utils.security;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace cryptobank.api.features.users.handlers;
 
