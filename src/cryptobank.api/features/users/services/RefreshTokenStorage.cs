@@ -40,7 +40,7 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
         return token;
     }
 
-    public string? Renew(string token)
+    public (int UserId, string Token)? Renew(string token)
     {
         var lockKey = LockKey(token);
         var lockValue = RandomValue(LockValueSize);
@@ -86,7 +86,7 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
                 { AttrReplacedByField, null }
             }, extend.Value ? _options.Value.Expiration : lastTokenTtl);
 
-            return nextToken;
+            return (userId.Value, nextToken);
         }
         finally
         {
