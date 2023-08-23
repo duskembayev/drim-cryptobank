@@ -1,16 +1,14 @@
 ﻿using System.Reflection;
-using cryptobank.api.db;
 using cryptobank.api.Enhanced.DependencyInjection;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
 using cryptobank.api.middlewares;
-using FastEndpoints;
 
 var appBuilder = WebApplication.CreateBuilder(args);
 
 appBuilder
-    .AddNews()
-    .AddUsers();
+    .AddUsers()
+    .AddNews();
 
 appBuilder.Services
     .AddEnhancedModules()

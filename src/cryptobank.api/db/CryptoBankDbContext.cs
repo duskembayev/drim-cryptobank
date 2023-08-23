@@ -1,6 +1,5 @@
 ﻿using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace cryptobank.api.db;

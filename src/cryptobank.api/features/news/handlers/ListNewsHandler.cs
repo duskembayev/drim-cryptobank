@@ -1,7 +1,3 @@
-using cryptobank.api.db;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
 namespace cryptobank.api.features.news.handlers;
 
 public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollection<NewsModel>>

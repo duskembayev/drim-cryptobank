@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Npgsql;
-
-namespace cryptobank.api.db;
+﻿namespace cryptobank.api.db;
 
 public static class SetupExtensions
 {
+    private const string ConnectionStringName = "cryptobank";
+
     public static async Task RestoreDatabaseAsync(this WebApplication @this, int dbWarmupTimeout)
     {
         await Task.Delay(dbWarmupTimeout);
@@ -35,17 +34,7 @@ public static class SetupExtensions
 
     private static string GetNpgsqlConnectionString(this IConfiguration @this)
     {
-        var baseConnectionString = @this.GetConnectionString(DbConfigConstants.DbConnectionStringName);
-        var dbHost = @this.GetSection(DbConfigConstants.DbHostConfigKey).Value;
-        var dbPassword = @this.GetSection(DbConfigConstants.DbPasswordConfigKey).Value;
-        var dbStringBuilder = new NpgsqlConnectionStringBuilder(baseConnectionString);
-
-        if (!string.IsNullOrEmpty(dbHost))
-            dbStringBuilder.Host = dbHost;
-
-        if (!string.IsNullOrEmpty(dbPassword))
-            dbStringBuilder.Password = dbPassword;
-
-        return dbStringBuilder.ConnectionString;
+        return @this.GetConnectionString(ConnectionStringName)
+               ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' not found");
     }
 }

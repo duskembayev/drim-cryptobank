@@ -1,7 +1,4 @@
 using cryptobank.api.features.news.config;
-using FastEndpoints;
-using MediatR;
-using Microsoft.Extensions.Options;
 
 namespace cryptobank.api.features.news.endpoints;
 

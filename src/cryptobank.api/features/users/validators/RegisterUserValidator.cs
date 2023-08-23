@@ -1,9 +1,6 @@
 ﻿using cryptobank.api.features.users.config;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
-using FastEndpoints;
-using FluentValidation;
-using Microsoft.Extensions.Options;
 
 namespace cryptobank.api.features.users.validators;
 

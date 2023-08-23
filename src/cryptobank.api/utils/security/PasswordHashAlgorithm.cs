@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using Enhanced.DependencyInjection;
 
 namespace cryptobank.api.utils.security;
 

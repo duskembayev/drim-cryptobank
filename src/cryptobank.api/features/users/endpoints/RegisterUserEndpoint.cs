@@ -1,7 +1,4 @@
-﻿using FastEndpoints;
-using MediatR;
-
-namespace cryptobank.api.features.users.endpoints;
+﻿namespace cryptobank.api.features.users.endpoints;
 
 public class RegisterUserEndpoint : Endpoint<RegisterUserRequest>
 {

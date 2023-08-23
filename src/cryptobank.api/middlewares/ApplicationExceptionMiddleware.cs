@@ -1,5 +1,4 @@
-﻿using Enhanced.DependencyInjection;
-using FastEndpoints;
+﻿using System.Security;
 
 namespace cryptobank.api.middlewares;
 
@@ -11,6 +10,16 @@ public class ApplicationExceptionMiddleware : IMiddleware
         try
         {
             await next(context);
+        }
+        catch (SecurityException e)
+        {
+            var errorResponse = new ErrorResponse
+            {
+                StatusCode = StatusCodes.Status401Unauthorized,
+                Message = e.Message
+            };
+
+            await errorResponse.ExecuteAsync(context);
         }
         catch (ApplicationException e)
         {
