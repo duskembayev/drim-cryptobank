@@ -26,5 +26,19 @@ public class Role
             Id = ApplicationRole.AdministratorRoleId,
             Name = ApplicationRole.Administrator
         };
+
+        public static Role GetByName(string name)
+        {
+            if (User.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return User;
+            
+            if (Analyst.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return Analyst;
+
+            if (Administrator.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return Administrator;
+
+            throw new ArgumentOutOfRangeException(nameof(name));
+        }
     }
 }

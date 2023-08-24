@@ -1,4 +1,6 @@
-﻿namespace cryptobank.api.features.users.domain;
+﻿using cryptobank.api.core;
+
+namespace cryptobank.api.features.users.domain;
 
 public class User
 {
@@ -8,5 +10,5 @@ public class User
     public byte[] PasswordSalt { get; init; } = Array.Empty<byte>();
     public DateOnly DateOfBirth { get; init; } = DateOnly.MinValue;
     public DateTime DateOfRegistration { get; init; } = DateTime.UnixEpoch;
-    public IList<Role> Roles { get; } = new List<Role>();
+    public IList<Role> Roles { get; } = new List<Role>(ApplicationRole.All.Length);
 }
