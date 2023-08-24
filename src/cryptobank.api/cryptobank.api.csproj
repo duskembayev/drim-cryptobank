@@ -8,4 +8,7 @@
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.32.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="features\accounts\handlers\" />
+  </ItemGroup>
 </Project>
