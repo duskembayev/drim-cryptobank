@@ -1,6 +1,5 @@
 ﻿using cryptobank.api.features.users.config;
 using Microsoft.IdentityModel.JsonWebTokens;
-using PasswordOptions = Microsoft.AspNetCore.Identity.PasswordOptions;
 
 namespace cryptobank.api.features.users;
 
@@ -15,9 +14,9 @@ public static class SetupExtensions
         @this.Services
             .Configure<RegisterUserOptions>(@this.Configuration.GetSection(RegisterUserSectionKey))
             .Configure<AccessTokenOptions>(@this.Configuration.GetSection(AccessTokenSectionKey))
-            .Configure<PasswordOptions>(@this.Configuration.GetSection(PasswordSectionKey))
+            .Configure<PasswordHashOptions>(@this.Configuration.GetSection(PasswordSectionKey))
             .AddSingleton<JsonWebTokenHandler>();
-
+    
         return @this;
     }
 }

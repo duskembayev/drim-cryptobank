@@ -95,7 +95,7 @@ internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
         if (parts[1] != "argon2id")
             throw new NotSupportedException("Invalid hash format");
 
-        var parameters = parts[2].Split(',');
+        var parameters = parts[3].Split(',');
         if (parameters.Length != 3)
             throw new FormatException("Invalid hash format");
 
@@ -108,7 +108,7 @@ internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
             : throw new FormatException("Invalid hash format");
 
         var degreeOfParallelism = parameters[2][..2] == "p="
-            ? int.Parse(parameters[1][2..])
+            ? int.Parse(parameters[2][2..])
             : throw new FormatException("Invalid hash format");
 
         var salt = Convert.FromBase64String(parts[4]);
