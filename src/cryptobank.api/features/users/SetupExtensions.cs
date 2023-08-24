@@ -7,7 +7,7 @@ public static class SetupExtensions
 {
     private const string RegisterUserSectionKey = "Features:Users:RegisterUser";
     private const string AccessTokenSectionKey = "Features:Users:AccessToken";
-    private const string PasswordSectionKey = "Features:Users:Password";
+    private const string PasswordSectionKey = "Features:Users:PasswordHash";
 
     public static WebApplicationBuilder AddUsers(this WebApplicationBuilder @this)
     {
