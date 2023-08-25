@@ -2,7 +2,6 @@
 
 public interface IPasswordHashAlgorithm
 {
-    byte[] GenerateSalt(int length);
-    byte[] ComputeHash(string data, byte[] salt, int length);
-    bool ValidateHash(string data, byte[] hash, byte[] salt);
+    Task<string> HashAsync(string password);
+    Task<bool> ValidateAsync(string delegatePassword, string formattedHash);
 }

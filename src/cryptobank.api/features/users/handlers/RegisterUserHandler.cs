@@ -33,16 +33,11 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
             throw new ApplicationException("User already exists");
 
         var role = await GetRoleAsync(email, cancellationToken);
-
-        var passwordSalt = _passwordHashAlgorithm
-            .GenerateSalt(_options.Value.PasswordSaltSize);
-        var passwordHash = _passwordHashAlgorithm
-            .ComputeHash(request.Password, passwordSalt, _options.Value.PasswordHashSize);
+        var passwordHash = await _passwordHashAlgorithm.HashAsync(request.Password);
 
         var user = new User
         {
             Email = email,
-            PasswordSalt = passwordSalt,
             PasswordHash = passwordHash,
             DateOfBirth = request.DateOfBirth,
             DateOfRegistration = _timeProvider.UtcNow,
