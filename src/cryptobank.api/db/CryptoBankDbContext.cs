@@ -71,12 +71,7 @@ public class CryptoBankDbContext : DbContext
         builder
             .Property(u => u.PasswordHash)
             .IsRequired()
-            .HasMaxLength(256);
-
-        builder
-            .Property(u => u.PasswordSalt)
-            .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(512);
 
         builder
             .Property(u => u.DateOfBirth)

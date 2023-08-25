@@ -31,7 +31,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
         if (user is null)
             throw new SecurityException("Invalid credentials");
 
-        if (!_passwordHashAlgorithm.ValidateHash(request.Password, user.PasswordHash, user.PasswordSalt))
+        if (!await _passwordHashAlgorithm.ValidateAsync(request.Password, user.PasswordHash))
             throw new SecurityException("Invalid credentials");
 
         return new TokenResponse
