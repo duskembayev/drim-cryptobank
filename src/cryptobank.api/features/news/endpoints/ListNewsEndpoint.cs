@@ -1,3 +1,4 @@
+using cryptobank.api.core;
 using cryptobank.api.features.news.config;
 
 namespace cryptobank.api.features.news.endpoints;
@@ -16,7 +17,7 @@ public class ListNewsEndpoint : EndpointWithoutRequest<IReadOnlyCollection<NewsM
     public override void Configure()
     {
         Get("/news");
-        AllowAnonymous();
+        Roles(ApplicationRole.User, ApplicationRole.Analyst);
     }
 
     public override async Task<IReadOnlyCollection<NewsModel>> ExecuteAsync(CancellationToken ct)

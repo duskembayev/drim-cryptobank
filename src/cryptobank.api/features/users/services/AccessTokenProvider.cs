@@ -26,7 +26,7 @@ public class AccessTokenProvider : IAccessTokenProvider
         _timeProvider = timeProvider;
         _options = options;
 
-        _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.SecurityKey));
+        _securityKey = _options.Value.GetSecurityKey();
     }
 
     public string Issue(User user)
@@ -35,7 +35,7 @@ public class AccessTokenProvider : IAccessTokenProvider
 
         var securityTokenDescriptor = new SecurityTokenDescriptor
         {
-            Issuer = _options.Value.Issuer,
+            Issuer = _options.Value.ClaimsIssuer,
             Audience = _options.Value.Audience,
             Expires = utcNow.Add(_options.Value.Expiration),
             IssuedAt = utcNow,
@@ -49,13 +49,16 @@ public class AccessTokenProvider : IAccessTokenProvider
 
     private static ClaimsIdentity GetClaims(User user)
     {
-        var claims = new ClaimsIdentity("Bearer");
+        var claims = new ClaimsIdentity(
+            AccessTokenConstants.Bearer,
+            AccessTokenConstants.ClaimsTypes.Email,
+            AccessTokenConstants.ClaimsTypes.Role);
 
-        claims.AddClaim(new Claim("id", user.Id.ToString()));
-        claims.AddClaim(new Claim("email", user.Email));
+        claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Id, user.Id.ToString()));
+        claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Email, user.Email));
 
         foreach (var role in user.Roles)
-            claims.AddClaim(new Claim("roles", role.Name));
+            claims.AddClaim(new Claim(AccessTokenConstants.ClaimsTypes.Role, role.Name));
 
         return claims;
     }
