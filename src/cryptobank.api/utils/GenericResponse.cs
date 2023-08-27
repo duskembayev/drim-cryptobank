@@ -2,7 +2,7 @@
 
 namespace cryptobank.api.utils;
 
-public class OperationResponse<T>
+public class GenericResponse<T>
 {
     [MemberNotNullWhen(true, nameof(Result))]
     [MemberNotNullWhen(false, nameof(ErrorMessage))]

@@ -18,17 +18,6 @@ public class CreateAccountEndpoint : Endpoint<CreateAccountRequest>
     public override async Task HandleAsync(CreateAccountRequest req, CancellationToken ct)
     {
         var res = await _mediator.Send(req, ct);
-
-        if (!res.Success)
-        {
-            await SendResultAsync(new ErrorResponse
-            {
-                StatusCode = StatusCodes.Status412PreconditionFailed,
-                Message = res.ErrorMessage
-            });
-            return;
-        }
-
-        await SendStringAsync(res.Result, cancellation: ct);
+        await SendOkAsync(res.AccountId, cancellation: ct);
     }
 }
