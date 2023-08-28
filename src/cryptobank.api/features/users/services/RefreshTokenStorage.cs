@@ -1,28 +1,27 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
-using System.Text.Json.Nodes;
 using cryptobank.api.features.users.config;
 using cryptobank.api.redis;
 using StackExchange.Redis;
+using Attr = cryptobank.api.features.users.services.IRefreshTokenAttributesSerializer.RefreshTokenAttributes;
 
 namespace cryptobank.api.features.users.services;
 
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IRefreshTokenStorage))]
 internal class RefreshTokenStorage : IRefreshTokenStorage
 {
-    private const string AttrIdField = "id";
-    private const string AttrExtendField = "ed";
-    private const string AttrReplacedByField = "by";
     private const int LockValueSize = 8;
 
     private readonly IOptions<RefreshTokenOptions> _options;
     private readonly IRedisConnection _redisConnection;
+    private readonly IRefreshTokenAttributesSerializer _attributesSerializer;
 
     public RefreshTokenStorage(
         IRedisConnection redisConnection,
+        IRefreshTokenAttributesSerializer attributesSerializer,
         IOptions<RefreshTokenOptions> options)
     {
         _redisConnection = redisConnection;
+        _attributesSerializer = attributesSerializer;
         _options = options;
     }
 
@@ -30,12 +29,7 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
     {
         var token = GenerateToken(userId);
 
-        SetTokenAttr(TokenKey(token), new JsonObject
-        {
-            { AttrIdField, userId },
-            { AttrExtendField, allowExtend },
-            { AttrReplacedByField, null }
-        }, _options.Value.Expiration);
+        SetTokenAttr(TokenKey(token), new Attr(userId, allowExtend), _options.Value.Expiration);
 
         return token;
     }
@@ -56,37 +50,26 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
             if (lastTokenTtl <= TimeSpan.Zero || !TryGetTokenAttr(lastTokenKey, out var lastTokenAttr))
                 return null;
 
-            var userId = lastTokenAttr[AttrIdField]?.GetValue<int?>();
-            var extend = lastTokenAttr[AttrExtendField]?.GetValue<bool?>();
-            var replacedBy = lastTokenAttr[AttrReplacedByField]?.GetValue<string?>();
-
-            if (userId is null or 0 || extend is null)
-                throw new InvalidOperationException("Invalid token attributes format");
-
-            if (!string.IsNullOrEmpty(replacedBy))
+            if (!string.IsNullOrEmpty(lastTokenAttr.ReplacedBy))
             {
                 Revoke(token);
                 return null;
             }
 
-            var nextToken = GenerateToken(userId.Value);
+            var nextToken = GenerateToken(lastTokenAttr.UserId);
             var nextTokenKey = TokenKey(nextToken);
 
-            SetTokenAttr(lastTokenKey, new JsonObject
+            SetTokenAttr(lastTokenKey, lastTokenAttr with
             {
-                { AttrIdField, userId.Value },
-                { AttrExtendField, extend.Value },
-                { AttrReplacedByField, nextToken }
+                ReplacedBy = nextToken
             }, lastTokenTtl);
 
-            SetTokenAttr(nextTokenKey, new JsonObject
+            SetTokenAttr(nextTokenKey, lastTokenAttr with
             {
-                { AttrIdField, userId.Value },
-                { AttrExtendField, extend.Value },
-                { AttrReplacedByField, null }
-            }, extend.Value ? _options.Value.Expiration : lastTokenTtl);
+                ReplacedBy = null
+            }, lastTokenAttr.AllowExtend ? _options.Value.Expiration : lastTokenTtl);
 
-            return (userId.Value, nextToken);
+            return (lastTokenAttr.UserId, nextToken);
         }
         finally
         {
@@ -105,14 +88,14 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
             if (!TryDeleteTokenAttr(tokenToRevokeKey, out var tokenToRevokeAttr))
                 break;
 
-            tokenToRevoke = tokenToRevokeAttr[AttrReplacedByField]?.GetValue<string?>();
+            tokenToRevoke = tokenToRevokeAttr.ReplacedBy;
         } while (!string.IsNullOrEmpty(tokenToRevoke));
     }
 
     public void RevokeAll(int userId)
     {
         bool canContinue;
-        
+
         do
         {
             canContinue = false;
@@ -126,41 +109,39 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
         } while (canContinue);
     }
 
-    private void SetTokenAttr(RedisKey tokenKey, JsonNode tokenAttr, TimeSpan expiry)
+    private void SetTokenAttr(RedisKey tokenKey, Attr tokenAttr, TimeSpan expiry)
     {
-        var tokenAttrString = tokenAttr.ToJsonString();
+        var tokenAttrString = _attributesSerializer.Serialize(tokenAttr);
 
         if (!_redisConnection.Database.StringSet(tokenKey, tokenAttrString, expiry))
             throw new InvalidOperationException("Failed to store token attributes");
     }
 
-    private bool TryGetTokenAttr(RedisKey tokenKey, [NotNullWhen(true)] out JsonNode? tokenAttr)
+    private bool TryGetTokenAttr(RedisKey tokenKey, out Attr tokenAttr)
     {
         string? tokenAttrString = _redisConnection.Database.StringGet(tokenKey);
 
         if (tokenAttrString is null)
         {
-            tokenAttr = null;
+            tokenAttr = default;
             return false;
         }
 
-        tokenAttr = JsonNode.Parse(tokenAttrString)
-                    ?? throw new InvalidOperationException("Failed to parse token attributes");
+        tokenAttr = _attributesSerializer.Deserialize(tokenAttrString);
         return true;
     }
 
-    private bool TryDeleteTokenAttr(RedisKey tokenKey, [NotNullWhen(true)] out JsonNode? tokenAttr)
+    private bool TryDeleteTokenAttr(RedisKey tokenKey, out Attr tokenAttr)
     {
         string? tokenAttrString = _redisConnection.Database.StringGetDelete(tokenKey);
 
         if (tokenAttrString is null)
         {
-            tokenAttr = null;
+            tokenAttr = default;
             return false;
         }
 
-        tokenAttr = JsonNode.Parse(tokenAttrString)
-                    ?? throw new InvalidOperationException("Failed to parse token attributes");
+        tokenAttr = _attributesSerializer.Deserialize(tokenAttrString);
         return true;
     }
 
