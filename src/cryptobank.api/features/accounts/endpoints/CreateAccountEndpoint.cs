@@ -1,4 +1,6 @@
-﻿namespace cryptobank.api.features.accounts.endpoints;
+﻿using cryptobank.api.core;
+
+namespace cryptobank.api.features.accounts.endpoints;
 
 public class CreateAccountEndpoint : Endpoint<CreateAccountRequest>
 {
@@ -12,7 +14,7 @@ public class CreateAccountEndpoint : Endpoint<CreateAccountRequest>
     public override void Configure()
     {
         Post("/accounts/create");
-        Roles(users.Roles.User.ToString("G"));
+        Roles(ApplicationRole.User);
     }
 
     public override async Task HandleAsync(CreateAccountRequest req, CancellationToken ct)
