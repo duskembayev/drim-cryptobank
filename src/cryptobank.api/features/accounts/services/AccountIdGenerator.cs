@@ -6,16 +6,18 @@ namespace cryptobank.api.features.accounts.services;
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IAccountIdGenerator))]
 internal class AccountIdGenerator : IAccountIdGenerator
 {
+    private const int AccountIdLength = 18;
+
     public string GenerateAccountId()
     {
-        var buffer = ArrayPool<byte>.Shared.Rent(16);
+        var buffer = ArrayPool<byte>.Shared.Rent(AccountIdLength);
 
         try
         {
-            RandomNumberGenerator.Fill(buffer.AsSpan()[..16]);
+            RandomNumberGenerator.Fill(buffer.AsSpan()[..AccountIdLength]);
 
             return BitConverter
-                .ToString(buffer, 0, 16)
+                .ToString(buffer, 0, AccountIdLength)
                 .Replace("-", "");
         }
         finally

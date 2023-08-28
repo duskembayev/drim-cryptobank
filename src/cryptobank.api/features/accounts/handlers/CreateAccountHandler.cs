@@ -7,10 +7,10 @@ namespace cryptobank.api.features.accounts.handlers;
 
 public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Account>
 {
-    private readonly CryptoBankDbContext _dbContext;
     private readonly IAccountIdGenerator _accountIdGenerator;
-    private readonly ITimeProvider _timeProvider;
+    private readonly CryptoBankDbContext _dbContext;
     private readonly IOptions<AccountsOptions> _options;
+    private readonly ITimeProvider _timeProvider;
 
     public CreateAccountHandler(
         CryptoBankDbContext dbContext,
@@ -29,7 +29,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Accoun
         var user = await _dbContext.Users
             .Include(user => user.Accounts)
             .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
-        
+
         if (user is null)
             throw new ApplicationException("User not found");
 

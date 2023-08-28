@@ -2,6 +2,8 @@
 using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Namotion.Reflection;
 
 namespace cryptobank.api.db;
 
@@ -30,27 +32,29 @@ public class CryptoBankDbContext : DbContext
     {
         builder.ToTable("Account");
         builder.HasKey(a => a.AccountId);
-        
+
         builder
             .Property(a => a.AccountId)
             .IsRequired()
             .HasMaxLength(36);
-        
+
         builder
             .HasOne(a => a.User)
-            .WithMany()
+            .WithMany(account => account.Accounts)
+            .HasForeignKey(a => a.UserId)
             .IsRequired();
-        
+
         builder
             .Property(a => a.Currency)
+            .HasConversion<EnumToStringConverter<Currency>>()
             .IsRequired()
             .HasMaxLength(3);
-        
+
         builder
             .Property(a => a.Balance)
             .IsRequired()
             .HasPrecision(18, 2);
-        
+
         builder
             .Property(a => a.DateOfOpening)
             .IsRequired();
@@ -119,11 +123,6 @@ public class CryptoBankDbContext : DbContext
             .HasMany(u => u.Roles)
             .WithMany()
             .UsingEntity("UserRole");
-
-        builder
-            .HasMany(u => u.Accounts)
-            .WithOne(a => a.User)
-            .IsRequired();
 
         builder
             .HasIndex(u => u.Email)
