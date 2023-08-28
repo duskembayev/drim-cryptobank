@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using cryptobank.api.features.users.config;
 using cryptobank.api.redis;
@@ -50,6 +51,9 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
             if (lastTokenTtl <= TimeSpan.Zero || !TryGetTokenAttr(lastTokenKey, out var lastTokenAttr))
                 return null;
 
+            if (lastTokenAttr.IsRevoked)
+                return null;
+
             if (!string.IsNullOrEmpty(lastTokenAttr.ReplacedBy))
             {
                 Revoke(token);
@@ -79,34 +83,45 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
 
     public void Revoke(string token)
     {
-        var tokenToRevoke = token;
-
-        do
-        {
-            var tokenToRevokeKey = TokenKey(tokenToRevoke);
-
-            if (!TryDeleteTokenAttr(tokenToRevokeKey, out var tokenToRevokeAttr))
-                break;
-
-            tokenToRevoke = tokenToRevokeAttr.ReplacedBy;
-        } while (!string.IsNullOrEmpty(tokenToRevoke));
+        RevokeCore(TokenKey(token));
     }
 
     public void RevokeAll(int userId)
     {
+        var pageOffset = 0;
         bool canContinue;
 
         do
         {
             canContinue = false;
-            var redisKeys = _redisConnection.Server.Keys(pattern: $"rt:u{userId:D5}:*");
+            var redisKeys = _redisConnection.Server
+                .Keys(pattern: $"rt:u{userId:D5}:*", pageOffset: pageOffset);
 
             foreach (var redisKey in redisKeys)
             {
-                Revoke(redisKey.ToString());
+                RevokeCore(redisKey);
                 canContinue = true;
+                pageOffset++;
             }
         } while (canContinue);
+    }
+
+    private void RevokeCore([DisallowNull] RedisKey? tokenKey)
+    {
+        do
+        {
+            if (!TryGetTokenAttr(tokenKey.Value, out var tokenAttr) || tokenAttr.IsRevoked)
+                break;
+
+            SetTokenAttr(tokenKey.Value, tokenAttr with
+            {
+                IsRevoked = true
+            }, TokenTtl(tokenKey.Value));
+
+            tokenKey = !string.IsNullOrEmpty(tokenAttr.ReplacedBy)
+                ? TokenKey(tokenAttr.ReplacedBy)
+                : (RedisKey?)null;
+        } while (tokenKey.HasValue);
     }
 
     private void SetTokenAttr(RedisKey tokenKey, Attr tokenAttr, TimeSpan expiry)
@@ -120,20 +135,6 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
     private bool TryGetTokenAttr(RedisKey tokenKey, out Attr tokenAttr)
     {
         string? tokenAttrString = _redisConnection.Database.StringGet(tokenKey);
-
-        if (tokenAttrString is null)
-        {
-            tokenAttr = default;
-            return false;
-        }
-
-        tokenAttr = _attributesSerializer.Deserialize(tokenAttrString);
-        return true;
-    }
-
-    private bool TryDeleteTokenAttr(RedisKey tokenKey, out Attr tokenAttr)
-    {
-        string? tokenAttrString = _redisConnection.Database.StringGetDelete(tokenKey);
 
         if (tokenAttrString is null)
         {
