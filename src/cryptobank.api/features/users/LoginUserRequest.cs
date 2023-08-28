@@ -1,6 +1,4 @@
-﻿using cryptobank.api.features.users.domain;
-
-namespace cryptobank.api.features.users;
+﻿namespace cryptobank.api.features.users;
 
 public class LoginUserRequest : IRequest<TokenResponse>
 {

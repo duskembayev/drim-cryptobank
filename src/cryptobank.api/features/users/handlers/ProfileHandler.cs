@@ -20,7 +20,7 @@ public class ProfileHandler : IRequestHandler<ProfileRequest, ProfileResponse>
                 Email = u.Email,
                 DateOfBirth = u.DateOfBirth,
                 DateOfRegistration = u.DateOfRegistration,
-                Roles = u.Roles.Select(r => r.Name).ToList()
-            }).FirstAsync(cancellationToken);
+                Roles = u.Roles.Select(r => r.Name).ToImmutableList()
+            }).SingleAsync(cancellationToken);
     }
 }
