@@ -6,7 +6,7 @@ using cryptobank.api.utils.security;
 
 namespace cryptobank.api.features.users.handlers;
 
-public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
+public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
 {
     private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
     private readonly ITimeProvider _timeProvider;
@@ -25,7 +25,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
         _options = options;
     }
 
-    public async Task<User> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
+    public async Task<int> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var email = request.Email.ToLowerInvariant();
 
@@ -48,7 +48,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, User>
         await _dbContext.AddAsync(user, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return user;
+        return user.Id;
     }
 
     private async Task<Role> GetRoleAsync(string email, CancellationToken cancellationToken)

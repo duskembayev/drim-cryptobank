@@ -1,6 +1,8 @@
-﻿using cryptobank.api.features.news.domain;
+﻿using cryptobank.api.features.accounts.domain;
+using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace cryptobank.api.db;
 
@@ -14,13 +16,47 @@ public class CryptoBankDbContext : DbContext
     public DbSet<News> News { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<Account> Accounts { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
             .Entity<News>(BuildNews)
             .Entity<User>(BuildUser)
-            .Entity<Role>(BuildRole);
+            .Entity<Role>(BuildRole)
+            .Entity<Account>(BuildAccount);
+    }
+
+    private static void BuildAccount(EntityTypeBuilder<Account> builder)
+    {
+        builder.ToTable("Account");
+        builder.HasKey(a => a.AccountId);
+
+        builder
+            .Property(a => a.AccountId)
+            .IsRequired()
+            .HasMaxLength(36);
+
+        builder
+            .HasOne(a => a.User)
+            .WithMany(u => u.Accounts)
+            .HasForeignKey(a => a.UserId)
+            .IsRequired();
+
+        builder
+            .Property(a => a.Currency)
+            .HasConversion<EnumToStringConverter<Currency>>()
+            .IsRequired()
+            .HasMaxLength(3);
+
+        builder
+            .Property(a => a.Balance)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder
+            .Property(a => a.DateOfOpening)
+            .IsRequired();
     }
 
     private static void BuildNews(EntityTypeBuilder<News> builder)
