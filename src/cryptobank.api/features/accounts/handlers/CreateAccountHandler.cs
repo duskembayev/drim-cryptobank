@@ -5,7 +5,7 @@ using cryptobank.api.utils.environment;
 
 namespace cryptobank.api.features.accounts.handlers;
 
-public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Account>
+public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, string>
 {
     private readonly IAccountIdGenerator _accountIdGenerator;
     private readonly CryptoBankDbContext _dbContext;
@@ -24,7 +24,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Accoun
         _options = options;
     }
 
-    public async Task<Account> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users
             .Include(user => user.Accounts)
@@ -48,6 +48,6 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Accoun
         await _dbContext.Accounts.AddAsync(account, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return account;
+        return account.AccountId;
     }
 }

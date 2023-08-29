@@ -3,7 +3,7 @@ using cryptobank.api.features.users.services;
 
 namespace cryptobank.api.features.accounts;
 
-public class CreateAccountRequest : IRequest<Account>
+public class CreateAccountRequest : IRequest<string>
 {
     [FromClaim(AccessTokenConstants.ClaimsTypes.Id)]
     public int UserId { get; set; }
