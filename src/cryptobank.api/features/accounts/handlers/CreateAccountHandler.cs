@@ -28,7 +28,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, Accoun
     {
         var user = await _dbContext.Users
             .Include(user => user.Accounts)
-            .FirstOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
+            .SingleOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
 
         if (user is null)
             throw new ApplicationException("User not found");
