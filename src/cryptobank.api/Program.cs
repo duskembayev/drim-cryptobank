@@ -3,8 +3,8 @@ using cryptobank.api.Enhanced.DependencyInjection;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
 using cryptobank.api.middlewares;
+using cryptobank.api.redis;
 using FastEndpoints.Swagger;
-using NJsonSchema;
 
 var appBuilder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,7 @@ appBuilder
     .AddNews();
 
 appBuilder.Services
+    .AddRedis()
     .AddEnhancedModules()
     .AddFastEndpoints()
     .SwaggerDocument(options =>

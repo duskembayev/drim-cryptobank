@@ -1,6 +1,6 @@
 ﻿namespace cryptobank.api.features.users.endpoints;
 
-public class LoginUserEndpoint : Endpoint<LoginUserRequest>
+public class LoginUserEndpoint : Endpoint<LoginUserRequest, TokenResponse>
 {
     private readonly IMediator _mediator;
 
