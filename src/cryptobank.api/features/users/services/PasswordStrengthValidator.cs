@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace cryptobank.api.utils.security;
+namespace cryptobank.api.features.users.services;
 
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IPasswordStrengthValidator))]
 internal partial class PasswordStrengthValidator : IPasswordStrengthValidator

@@ -1,4 +1,4 @@
-﻿namespace cryptobank.api.utils.security;
+﻿namespace cryptobank.api.features.users.services;
 
 public interface IEmailFormatValidator
 {

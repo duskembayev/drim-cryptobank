@@ -2,7 +2,7 @@
 using cryptobank.api.features.users.config;
 using Konscious.Security.Cryptography;
 
-namespace cryptobank.api.utils.security;
+namespace cryptobank.api.features.users.services;
 
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IPasswordHashAlgorithm))]
 internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm

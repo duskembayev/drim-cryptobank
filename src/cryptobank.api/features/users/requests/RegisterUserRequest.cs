@@ -1,6 +1,6 @@
 ﻿using cryptobank.api.features.users.config;
+using cryptobank.api.features.users.services;
 using cryptobank.api.utils.environment;
-using cryptobank.api.utils.security;
 
 namespace cryptobank.api.features.users.requests;
 
