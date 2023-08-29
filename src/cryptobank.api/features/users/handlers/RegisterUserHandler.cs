@@ -1,6 +1,7 @@
 ﻿using cryptobank.api.core;
 using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
+using cryptobank.api.features.users.requests;
 using cryptobank.api.utils.environment;
 using cryptobank.api.utils.security;
 

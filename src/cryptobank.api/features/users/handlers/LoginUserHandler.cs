@@ -1,4 +1,6 @@
 ﻿using System.Security;
+using cryptobank.api.features.users.requests;
+using cryptobank.api.features.users.responses;
 using cryptobank.api.features.users.services;
 using cryptobank.api.utils.security;
 

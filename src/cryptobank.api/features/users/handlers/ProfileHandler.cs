@@ -1,4 +1,7 @@
-﻿namespace cryptobank.api.features.users.handlers;
+﻿using cryptobank.api.features.users.requests;
+using cryptobank.api.features.users.responses;
+
+namespace cryptobank.api.features.users.handlers;
 
 public class ProfileHandler : IRequestHandler<ProfileRequest, ProfileResponse>
 {

@@ -1,4 +1,4 @@
-﻿namespace cryptobank.api.features.users;
+﻿namespace cryptobank.api.features.users.responses;
 
 public class TokenResponse
 {

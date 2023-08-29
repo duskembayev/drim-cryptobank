@@ -1,4 +1,5 @@
 using cryptobank.api.core;
+using cryptobank.api.features.users.requests;
 
 namespace cryptobank.api.features.users.endpoints;
 

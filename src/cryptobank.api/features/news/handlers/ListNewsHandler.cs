@@ -1,3 +1,6 @@
+using cryptobank.api.features.news.models;
+using cryptobank.api.features.news.requests;
+
 namespace cryptobank.api.features.news.handlers;
 
 public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollection<NewsModel>>

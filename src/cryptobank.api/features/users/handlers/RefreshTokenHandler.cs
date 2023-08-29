@@ -1,4 +1,6 @@
 using System.Security;
+using cryptobank.api.features.users.requests;
+using cryptobank.api.features.users.responses;
 using cryptobank.api.features.users.services;
 
 namespace cryptobank.api.features.users.handlers;

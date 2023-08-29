@@ -1,3 +1,6 @@
+using cryptobank.api.features.users.requests;
+using cryptobank.api.features.users.responses;
+
 namespace cryptobank.api.features.users.endpoints;
 
 public class RefreshTokenEndpoint : Endpoint<RefreshTokenRequest, TokenResponse>

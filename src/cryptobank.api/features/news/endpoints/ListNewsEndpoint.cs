@@ -1,5 +1,7 @@
 using cryptobank.api.core;
 using cryptobank.api.features.news.config;
+using cryptobank.api.features.news.models;
+using cryptobank.api.features.news.requests;
 
 namespace cryptobank.api.features.news.endpoints;
 

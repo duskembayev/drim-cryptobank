@@ -1,5 +1,6 @@
 ﻿using cryptobank.api.features.accounts.config;
 using cryptobank.api.features.accounts.domain;
+using cryptobank.api.features.accounts.requests;
 using cryptobank.api.features.accounts.services;
 using cryptobank.api.utils.environment;
 
