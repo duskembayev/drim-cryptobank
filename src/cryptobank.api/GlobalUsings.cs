@@ -1,3 +1,4 @@
+global using System.Collections.Immutable;
 global using System.Text;
 global using cryptobank.api.db;
 global using Enhanced.DependencyInjection;

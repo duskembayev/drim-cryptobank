@@ -7,17 +7,20 @@ namespace cryptobank.api.features.users.handlers;
 public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
 {
     private readonly IAccessTokenProvider _accessTokenProvider;
+    private readonly IRefreshTokenStorage _refreshTokenStorage;
     private readonly CryptoBankDbContext _dbContext;
     private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
 
     public LoginUserHandler(
         CryptoBankDbContext dbContext,
         IPasswordHashAlgorithm passwordHashAlgorithm,
-        IAccessTokenProvider accessTokenProvider)
+        IAccessTokenProvider accessTokenProvider,
+        IRefreshTokenStorage refreshTokenStorage)
     {
         _dbContext = dbContext;
         _passwordHashAlgorithm = passwordHashAlgorithm;
         _accessTokenProvider = accessTokenProvider;
+        _refreshTokenStorage = refreshTokenStorage;
     }
 
     public async Task<TokenResponse> Handle(LoginUserRequest request, CancellationToken cancellationToken)
@@ -36,7 +39,8 @@ public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
 
         return new TokenResponse
         {
-            AccessToken = _accessTokenProvider.Issue(user)
+            AccessToken = _accessTokenProvider.Issue(user),
+            RefreshToken = _refreshTokenStorage.Issue(user.Id, request.RememberMe)
         };
     }
 }
