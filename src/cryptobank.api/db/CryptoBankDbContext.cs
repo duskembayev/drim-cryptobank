@@ -3,7 +3,6 @@ using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Namotion.Reflection;
 
 namespace cryptobank.api.db;
 
@@ -40,7 +39,7 @@ public class CryptoBankDbContext : DbContext
 
         builder
             .HasOne(a => a.User)
-            .WithMany(account => account.Accounts)
+            .WithMany(u => u.Accounts)
             .HasForeignKey(a => a.UserId)
             .IsRequired();
 
