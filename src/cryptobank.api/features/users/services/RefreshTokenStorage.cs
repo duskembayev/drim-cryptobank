@@ -12,9 +12,9 @@ internal class RefreshTokenStorage : IRefreshTokenStorage
 {
     private const int LockValueSize = 8;
 
+    private readonly IRefreshTokenAttributesSerializer _attributesSerializer;
     private readonly IOptions<RefreshTokenOptions> _options;
     private readonly IRedisConnection _redisConnection;
-    private readonly IRefreshTokenAttributesSerializer _attributesSerializer;
 
     public RefreshTokenStorage(
         IRedisConnection redisConnection,

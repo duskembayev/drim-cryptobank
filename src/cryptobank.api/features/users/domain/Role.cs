@@ -31,7 +31,7 @@ public class Role
         {
             if (User.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 return User;
-            
+
             if (Analyst.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 return Analyst;
 

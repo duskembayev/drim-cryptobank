@@ -20,6 +20,6 @@ public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollect
             .OrderByDescending(n => n.Date)
             .Take(request.Count)
             .Select(n => new NewsModel(n.Title, n.Content, n.Date, n.Author))
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken);
     }
 }

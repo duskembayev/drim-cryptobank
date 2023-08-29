@@ -5,7 +5,7 @@ namespace cryptobank.api.features.users.requests;
 public class RefreshTokenRequest : IRequest<TokenResponse>
 {
     public string RefreshToken { get; set; } = string.Empty;
-    
+
     public class Validator : AbstractValidator<RefreshTokenRequest>
     {
         public Validator()

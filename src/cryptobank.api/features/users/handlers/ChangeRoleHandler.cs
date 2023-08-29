@@ -11,15 +11,15 @@ public class ChangeRoleHandler : IRequestHandler<ChangeRoleRequest>
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task Handle(ChangeRoleRequest request, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users
             .Include(u => u.Roles)
-            .FirstAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
-        
+            .FirstAsync(u => u.Id == request.UserId, cancellationToken);
+
         user.Roles.Clear();
-        
+
         foreach (var roleName in request.Roles)
         {
             var role = Role.Detached.GetByName(roleName);

@@ -9,10 +9,10 @@ namespace cryptobank.api.features.users.handlers;
 
 public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
 {
-    private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
-    private readonly ITimeProvider _timeProvider;
     private readonly CryptoBankDbContext _dbContext;
     private readonly IOptions<RegisterUserOptions> _options;
+    private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
+    private readonly ITimeProvider _timeProvider;
 
     public RegisterUserHandler(
         CryptoBankDbContext dbContext,
@@ -42,7 +42,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
             PasswordHash = passwordHash,
             DateOfBirth = request.DateOfBirth,
             DateOfRegistration = _timeProvider.UtcNow,
-            Roles = {role}
+            Roles = { role }
         };
 
         _dbContext.AttachRange(user.Roles);
@@ -57,7 +57,8 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
         if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
             && !await _dbContext.Users
                 .Include(user => user.Roles)
-                .AnyAsync(user => user.Roles.Any(role => role.Id == ApplicationRole.AdministratorRoleId), cancellationToken))
+                .AnyAsync(user => user.Roles.Any(role => role.Id == ApplicationRole.AdministratorRoleId),
+                    cancellationToken))
             return Role.Detached.Administrator;
 
         return Role.Detached.User;

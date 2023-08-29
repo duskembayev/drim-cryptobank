@@ -11,13 +11,13 @@ public class LoginUserEndpoint : Endpoint<LoginUserRequest, TokenResponse>
     {
         _mediator = mediator;
     }
-    
+
     public override void Configure()
     {
         Post("/user/login");
         AllowAnonymous();
     }
-    
+
     public override async Task HandleAsync(LoginUserRequest req, CancellationToken ct)
     {
         var res = await _mediator.Send(req, ct);

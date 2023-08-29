@@ -13,9 +13,9 @@ public class AccessTokenProvider : IAccessTokenProvider
     private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha256;
 
     private readonly JsonWebTokenHandler _jsonWebTokenHandler;
-    private readonly ITimeProvider _timeProvider;
     private readonly IOptions<AccessTokenOptions> _options;
     private readonly SecurityKey _securityKey;
+    private readonly ITimeProvider _timeProvider;
 
     public AccessTokenProvider(
         JsonWebTokenHandler jsonWebTokenHandler,
@@ -41,7 +41,7 @@ public class AccessTokenProvider : IAccessTokenProvider
             IssuedAt = utcNow,
             NotBefore = utcNow,
             Subject = GetClaims(user),
-            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithm),
+            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithm)
         };
 
         return _jsonWebTokenHandler.CreateToken(securityTokenDescriptor);

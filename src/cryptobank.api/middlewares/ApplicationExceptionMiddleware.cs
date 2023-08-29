@@ -26,7 +26,7 @@ public class ApplicationExceptionMiddleware : IMiddleware
             var errorResponse = new ErrorResponse
             {
                 StatusCode = StatusCodes.Status400BadRequest,
-                Message = e.Message 
+                Message = e.Message
             };
 
             await errorResponse.ExecuteAsync(context);

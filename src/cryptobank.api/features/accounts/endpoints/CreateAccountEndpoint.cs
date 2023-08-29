@@ -21,6 +21,6 @@ public class CreateAccountEndpoint : Endpoint<CreateAccountRequest>
     public override async Task HandleAsync(CreateAccountRequest req, CancellationToken ct)
     {
         var res = await _mediator.Send(req, ct);
-        await SendOkAsync(res, cancellation: ct);
+        await SendOkAsync(res, ct);
     }
 }

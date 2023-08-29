@@ -9,9 +9,9 @@ namespace cryptobank.api.features.users.handlers;
 public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
 {
     private readonly IAccessTokenProvider _accessTokenProvider;
-    private readonly IRefreshTokenStorage _refreshTokenStorage;
     private readonly CryptoBankDbContext _dbContext;
     private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
+    private readonly IRefreshTokenStorage _refreshTokenStorage;
 
     public LoginUserHandler(
         CryptoBankDbContext dbContext,

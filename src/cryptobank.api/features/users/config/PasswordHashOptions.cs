@@ -7,4 +7,4 @@ public class PasswordHashOptions
     public int MemorySize { get; set; } = 8192;
     public int SaltSize { get; set; } = 32;
     public int HashSize { get; set; } = 128;
-}   
+}
