@@ -1,5 +1,4 @@
-﻿using System.Security;
-using cryptobank.api.features.users.requests;
+﻿using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.responses;
 using cryptobank.api.features.users.services;
 
@@ -33,10 +32,10 @@ public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
             .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
         if (user is null)
-            throw new SecurityException("Invalid credentials");
+            throw new SecurityException("users:login:invalid_credentials", "Invalid credentials");
 
         if (!await _passwordHashAlgorithm.ValidateAsync(request.Password, user.PasswordHash))
-            throw new SecurityException("Invalid credentials");
+            throw new SecurityException("users:login:invalid_credentials", "Invalid credentials");
 
         return new TokenResponse
         {

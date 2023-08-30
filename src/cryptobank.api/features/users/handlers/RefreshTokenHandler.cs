@@ -1,4 +1,3 @@
-using System.Security;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.responses;
 using cryptobank.api.features.users.services;
@@ -26,7 +25,9 @@ public class RefreshTokenHandler : IRequestHandler<RefreshTokenRequest, TokenRes
         var nextRefreshToken = _refreshTokenStorage.Renew(request.RefreshToken);
 
         if (nextRefreshToken is null)
-            throw new SecurityException("Token expired or revoked");
+            throw new SecurityException(
+                "users:refresh_token:expired",
+                "Token expired or revoked");
 
         var user = await _dbContext.Users.SingleAsync(
             user => user.Id == nextRefreshToken.Value.UserId,
