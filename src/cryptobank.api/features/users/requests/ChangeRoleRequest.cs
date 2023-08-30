@@ -15,12 +15,12 @@ public class ChangeRoleRequest : IRequest
 
             RuleFor(request => request.Roles)
                 .NotEmpty()
-                .WithErrorCode("users:change-role:roles_empty")
+                .WithErrorCode("users:change_role:roles_empty")
                 .WithMessage("At least one role must be specified");
 
             RuleFor(request => request.Roles)
                 .Must(roles => roles.All(Role.Detached.Exists))
-                .WithErrorCode("users:change-role:roles_invalid")
+                .WithErrorCode("users:change_role:roles_invalid")
                 .WithMessage("One or more roles are invalid");
         }
     }

@@ -18,8 +18,8 @@ public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollect
     {
         return await _dbContext.News
             .OrderByDescending(n => n.Date)
-            .Take(request.Count)
             .Select(n => new NewsModel(n.Title, n.Content, n.Date, n.Author))
+            .Take(request.Count)
             .ToListAsync(cancellationToken);
     }
 }
