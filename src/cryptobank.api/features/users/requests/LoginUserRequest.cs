@@ -14,10 +14,12 @@ public class LoginUserRequest : IRequest<TokenResponse>
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
+                .WithErrorCode("users:login:email_empty")
                 .WithMessage("Email is required");
 
             RuleFor(x => x.Password)
                 .NotEmpty()
+                .WithErrorCode("users:login:password_empty")
                 .WithMessage("Password is required");
         }
     }

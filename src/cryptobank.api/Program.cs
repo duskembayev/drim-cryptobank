@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using cryptobank.api.Enhanced.DependencyInjection;
-using cryptobank.api.errors;
 using cryptobank.api.features.accounts;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
@@ -44,7 +43,7 @@ app.UseAuthorization();
 app.UseFastEndpoints(c =>
 {
     c.Endpoints.ShortNames = true;
-    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
+    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
 });
 app.UseSwaggerGen();
 

@@ -12,6 +12,7 @@ public class RefreshTokenRequest : IRequest<TokenResponse>
         {
             RuleFor(request => request.RefreshToken)
                 .NotEmpty()
+                .WithErrorCode("users:refresh-token:token_empty")
                 .WithMessage("Token is not specified");
         }
     }

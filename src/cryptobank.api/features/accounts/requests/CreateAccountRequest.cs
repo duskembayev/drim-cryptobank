@@ -15,13 +15,8 @@ public class CreateAccountRequest : IRequest<string>
     {
         public Validator()
         {
-            RuleFor(request => request.Currency)
-                .IsInEnum()
-                .WithMessage("Currency is not valid");
-
-            RuleFor(request => request.UserId)
-                .GreaterThan(0)
-                .WithMessage("UserId is not valid");
+            RuleFor(request => request.Currency).ValidEnumValue();
+            RuleFor(request => request.UserId).ValidUserId();
         }
     }
 }

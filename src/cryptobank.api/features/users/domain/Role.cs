@@ -40,5 +40,19 @@ public class Role
 
             throw new ArgumentOutOfRangeException(nameof(name));
         }
+        
+        public static bool Exists(string name)
+        {
+            if (User.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (Analyst.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (Administrator.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
+        }
     }
 }
