@@ -7,7 +7,7 @@ public sealed class ValidationException : ProblemException
     private readonly ImmutableArray<ValidationError> _errors;
 
     public ValidationException(ImmutableArray<ValidationError> errors)
-        : base("One or more validation failures have occurred.")
+        : base(message: "One or more validation failures have occurred.")
     {
         _errors = errors;
     }

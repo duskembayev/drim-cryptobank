@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using cryptobank.api.errors.exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace cryptobank.api.errors;

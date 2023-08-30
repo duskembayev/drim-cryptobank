@@ -2,7 +2,6 @@
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.services;
-using cryptobank.api.utils.environment;
 
 namespace cryptobank.api.features.users.handlers;
 
@@ -30,7 +29,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
         var email = request.Email.ToLowerInvariant();
 
         if (await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
-            throw new ApplicationException("User already exists");
+            throw new LogicException("users:register:user_exists", "User already exists");
 
         var role = await GetRoleAsync(email, cancellationToken);
         var passwordHash = await _passwordHashAlgorithm.HashAsync(request.Password);

@@ -2,6 +2,8 @@ global using System.Collections.Immutable;
 global using System.Text;
 global using cryptobank.api.db;
 global using cryptobank.api.errors;
+global using cryptobank.api.errors.exceptions;
+global using cryptobank.api.utils.environment;
 global using Enhanced.DependencyInjection;
 global using FastEndpoints;
 global using FluentValidation;

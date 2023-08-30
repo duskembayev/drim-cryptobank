@@ -2,9 +2,12 @@
 
 public abstract class ProblemException : Exception
 {
-    protected ProblemException(string? message = null, Exception? innerException = null)
+    private readonly string? _code;
+
+    protected ProblemException(string? code = null, string? message = null, Exception? innerException = null)
         : base(message, innerException)
     {
+        _code = code;
     }
 
     protected virtual string Type => $"https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/{Status:D}";
@@ -20,6 +23,9 @@ public abstract class ProblemException : Exception
             Title = Title,
             Detail = Message
         };
+
+        if (_code is not null)
+            details.Extensions["code"] = _code;
 
         return details;
     }
