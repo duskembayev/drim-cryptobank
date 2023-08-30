@@ -1,4 +1,4 @@
-using cryptobank.api.core;
+using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 
 namespace cryptobank.api.features.users.endpoints;
@@ -15,7 +15,7 @@ public class ChangeRoleEndpoint : Endpoint<ChangeRoleRequest>
     public override void Configure()
     {
         Post("/user/changeRole");
-        Roles(ApplicationRole.Administrator);
+        Roles(Role.Administrator);
     }
 
     public override async Task HandleAsync(ChangeRoleRequest req, CancellationToken ct)

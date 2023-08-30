@@ -1,5 +1,4 @@
-﻿using cryptobank.api.core;
-using cryptobank.api.features.users.config;
+﻿using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.services;
@@ -57,7 +56,8 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
         if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
             && !await _dbContext.Users
                 .Include(user => user.Roles)
-                .AnyAsync(user => user.Roles.Any(role => role.Id == ApplicationRole.AdministratorRoleId),
+                .AnyAsync(
+                    user => user.Roles.Any(role => role.Id == Role.Detached.Administrator.Id),
                     cancellationToken))
             return Role.Detached.Administrator;
 
