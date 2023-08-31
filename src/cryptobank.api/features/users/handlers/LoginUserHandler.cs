@@ -29,7 +29,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserRequest, TokenResponse>
 
         var user = await _dbContext.Users
             .Include(user => user.Roles)
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            .SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
 
         if (user is null)
             throw new SecurityException("users:login:invalid_credentials", "Invalid credentials");

@@ -16,7 +16,7 @@ public class ChangeRoleHandler : IRequestHandler<ChangeRoleRequest>
     {
         var user = await _dbContext.Users
             .Include(u => u.Roles)
-            .FirstAsync(u => u.Id == request.UserId, cancellationToken);
+            .SingleAsync(u => u.Id == request.UserId, cancellationToken);
 
         user.Roles.Clear();
 
