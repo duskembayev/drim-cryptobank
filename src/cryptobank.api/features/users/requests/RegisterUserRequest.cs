@@ -12,14 +12,13 @@ public class RegisterUserRequest : IRequest<int>
     public class Validator : AbstractValidator<RegisterUserRequest>
     {
         public Validator(
-            IEmailFormatValidator emailFormatValidator,
             IPasswordStrengthValidator passwordStrengthValidator,
             ITimeProvider timeProvider,
             IOptions<RegisterUserOptions> options)
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .Must(emailFormatValidator.Validate)
+                .EmailAddress()
                 .WithErrorCode("users:register:email_invalid")
                 .WithMessage("Email is not valid");
 
