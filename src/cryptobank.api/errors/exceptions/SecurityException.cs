@@ -6,7 +6,4 @@ public sealed class SecurityException : ProblemException
         : base(code, message, exception)
     {
     }
-
-    protected override int Status => StatusCodes.Status400BadRequest;
-    protected override string Title => "Security Validation Failed";
 }

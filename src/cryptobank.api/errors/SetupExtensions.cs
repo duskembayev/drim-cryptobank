@@ -12,18 +12,10 @@ public static class SetupExtensions
             var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
             if (exceptionHandlerFeature is null)
                 return;
-
-            var details = exceptionHandlerFeature.Error switch
-            {
-                ProblemException problemException => problemException.ToDetails(),
-                _ => new ProblemDetails
-                {
-                    Type = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Internal Server Error",
-                    Detail = "An unhandled exception has occurred while executing the request.",
-                }
-            };
+            
+            var details = context.RequestServices
+                .GetRequiredService<HttpProblemDetailsBuilder>()
+                .Build(exceptionHandlerFeature.Error);
 
             details.Extensions["traceId"] = Activity.Current?.Id ?? context.TraceIdentifier;
             context.Response.StatusCode = details.Status!.Value;

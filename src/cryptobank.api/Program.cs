@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using cryptobank.api.Enhanced.DependencyInjection;
 using cryptobank.api.features.accounts;

@@ -6,7 +6,4 @@ public class LogicException : ProblemException
         : base(code, message, exception)
     {
     }
-    
-    protected override int Status => StatusCodes.Status409Conflict;
-    protected override string Title => "Logic Error";
 }
