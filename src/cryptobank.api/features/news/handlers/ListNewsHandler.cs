@@ -1,3 +1,6 @@
+using cryptobank.api.features.news.models;
+using cryptobank.api.features.news.requests;
+
 namespace cryptobank.api.features.news.handlers;
 
 public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollection<NewsModel>>
@@ -15,8 +18,8 @@ public class ListNewsHandler : IRequestHandler<ListNewsRequest, IReadOnlyCollect
     {
         return await _dbContext.News
             .OrderByDescending(n => n.Date)
-            .Take(request.Count)
             .Select(n => new NewsModel(n.Title, n.Content, n.Date, n.Author))
-            .ToListAsync(cancellationToken: cancellationToken);
+            .Take(request.Count)
+            .ToListAsync(cancellationToken);
     }
 }

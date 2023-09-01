@@ -1,7 +1,7 @@
 ﻿using cryptobank.api.features.accounts.config;
 using cryptobank.api.features.accounts.domain;
+using cryptobank.api.features.accounts.requests;
 using cryptobank.api.features.accounts.services;
-using cryptobank.api.utils.environment;
 
 namespace cryptobank.api.features.accounts.handlers;
 
@@ -28,13 +28,12 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, string
     {
         var user = await _dbContext.Users
             .Include(user => user.Accounts)
-            .SingleOrDefaultAsync(user => user.Id == request.UserId, cancellationToken);
-
-        if (user is null)
-            throw new ApplicationException("User not found");
+            .SingleAsync(user => user.Id == request.UserId, cancellationToken);
 
         if (user.Accounts.Count >= _options.Value.MaxAccountsPerUser)
-            throw new ApplicationException("User has reached the maximum number of accounts");
+            throw new LogicException(
+                "accounts:create:limit_reached",
+                "User has reached the maximum number of accounts");
 
         var account = new Account
         {

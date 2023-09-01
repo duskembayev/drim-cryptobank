@@ -19,7 +19,7 @@ internal class RefreshTokenAttributesSerializer : IRefreshTokenAttributesSeriali
             { AttrIdField, attributes.UserId },
             { AttrExtendField, attributes.AllowExtend },
             { AttrReplacedByField, attributes.ReplacedBy },
-            { AttrRevokedField, attributes.IsRevoked },
+            { AttrRevokedField, attributes.IsRevoked }
         };
 
         return jsonNode.ToJsonString();
@@ -28,7 +28,7 @@ internal class RefreshTokenAttributesSerializer : IRefreshTokenAttributesSeriali
     public Attr Deserialize(string value)
     {
         var jsonNode = JsonNode.Parse(value) ?? throw new FormatException("Failed to parse token attributes");
-        
+
         var userId = jsonNode[AttrIdField]?.GetValue<int?>();
         var extend = jsonNode[AttrExtendField]?.GetValue<bool?>();
         var replacedBy = jsonNode[AttrReplacedByField]?.GetValue<string?>();

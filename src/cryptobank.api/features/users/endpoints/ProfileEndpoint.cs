@@ -1,16 +1,14 @@
-﻿using cryptobank.api.utils.security;
+﻿using cryptobank.api.features.users.requests;
 
 namespace cryptobank.api.features.users.endpoints;
 
-public class ProfileEndpoint : EndpointWithoutRequest<ProfileResponse>
+public class ProfileEndpoint : Endpoint<ProfileRequest>
 {
     private readonly IMediator _mediator;
-    private readonly IUserProvider _userProvider;
 
-    public ProfileEndpoint(IMediator mediator, IUserProvider userProvider)
+    public ProfileEndpoint(IMediator mediator)
     {
         _mediator = mediator;
-        _userProvider = userProvider;
     }
 
     public override void Configure()
@@ -18,9 +16,9 @@ public class ProfileEndpoint : EndpointWithoutRequest<ProfileResponse>
         Get("/user/profile");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(ProfileRequest req, CancellationToken ct)
     {
-        var res = await _mediator.Send(new ProfileRequest {UserId = _userProvider.Id}, ct);
+        var res = await _mediator.Send(req, ct);
         await SendOkAsync(res, ct);
     }
 }

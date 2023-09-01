@@ -1,17 +1,16 @@
-﻿using cryptobank.api.core;
-using cryptobank.api.features.users.config;
+﻿using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
-using cryptobank.api.utils.environment;
-using cryptobank.api.utils.security;
+using cryptobank.api.features.users.requests;
+using cryptobank.api.features.users.services;
 
 namespace cryptobank.api.features.users.handlers;
 
 public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
 {
-    private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
-    private readonly ITimeProvider _timeProvider;
     private readonly CryptoBankDbContext _dbContext;
     private readonly IOptions<RegisterUserOptions> _options;
+    private readonly IPasswordHashAlgorithm _passwordHashAlgorithm;
+    private readonly ITimeProvider _timeProvider;
 
     public RegisterUserHandler(
         CryptoBankDbContext dbContext,
@@ -30,7 +29,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
         var email = request.Email.ToLowerInvariant();
 
         if (await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
-            throw new ApplicationException("User already exists");
+            throw new LogicException("users:register:user_exists", "User already exists");
 
         var role = await GetRoleAsync(email, cancellationToken);
         var passwordHash = await _passwordHashAlgorithm.HashAsync(request.Password);
@@ -41,7 +40,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
             PasswordHash = passwordHash,
             DateOfBirth = request.DateOfBirth,
             DateOfRegistration = _timeProvider.UtcNow,
-            Roles = {role}
+            Roles = { role }
         };
 
         _dbContext.AttachRange(user.Roles);
@@ -56,7 +55,9 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
         if (email.Equals(_options.Value.FallbackAdminEmail, StringComparison.OrdinalIgnoreCase)
             && !await _dbContext.Users
                 .Include(user => user.Roles)
-                .AnyAsync(user => user.Roles.Any(role => role.Id == ApplicationRole.AdministratorRoleId), cancellationToken))
+                .AnyAsync(
+                    user => user.Roles.Any(role => role.Id == Role.Detached.Administrator.Id),
+                    cancellationToken))
             return Role.Detached.Administrator;
 
         return Role.Detached.User;

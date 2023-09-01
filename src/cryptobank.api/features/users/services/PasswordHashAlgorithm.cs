@@ -2,7 +2,7 @@
 using cryptobank.api.features.users.config;
 using Konscious.Security.Cryptography;
 
-namespace cryptobank.api.utils.security;
+namespace cryptobank.api.features.users.services;
 
 [ContainerEntry(ServiceLifetime.Singleton, typeof(IPasswordHashAlgorithm))]
 internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
@@ -41,7 +41,7 @@ internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
             degreeOfParallelism,
             iterations,
             memorySize);
-        
+
         return CryptographicOperations.FixedTimeEquals(hash, delegateHash);
     }
 
@@ -54,7 +54,7 @@ internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
             Salt = salt,
             DegreeOfParallelism = degreeOfParallelism,
             Iterations = iterations,
-            MemorySize = memorySize,
+            MemorySize = memorySize
         };
 
         return await argon2.GetBytesAsync(hashSize);

@@ -1,4 +1,6 @@
-﻿namespace cryptobank.api.features.users.endpoints;
+﻿using cryptobank.api.features.users.requests;
+
+namespace cryptobank.api.features.users.endpoints;
 
 public class RegisterUserEndpoint : Endpoint<RegisterUserRequest>
 {

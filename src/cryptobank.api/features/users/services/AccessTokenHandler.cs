@@ -4,7 +4,6 @@ using cryptobank.api.features.users.config;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 
 namespace cryptobank.api.features.users.services;
 
@@ -42,7 +41,7 @@ public class AccessTokenHandler : AuthenticationHandler<AccessTokenOptions>
         var claimsPrincipal = new ClaimsPrincipal(validationResult.ClaimsIdentity);
         return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
     }
-    
+
     private TokenValidationParameters GetTokenValidationParameters()
     {
         return new TokenValidationParameters
