@@ -2,7 +2,7 @@ using ValidationException = cryptobank.api.errors.exceptions.ValidationException
 
 namespace cryptobank.api.errors;
 
-[ContainerEntry(ServiceLifetime.Singleton)]
+[Singleton]
 internal class HttpProblemDetailsBuilder
 {
     public ProblemDetails Build(Exception exception)

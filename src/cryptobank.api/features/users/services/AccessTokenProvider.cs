@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace cryptobank.api.features.users.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IAccessTokenProvider))]
+[Singleton<IAccessTokenProvider>]
 public class AccessTokenProvider : IAccessTokenProvider
 {
     private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha256;

@@ -4,7 +4,7 @@ using Attr = cryptobank.api.features.users.services.IRefreshTokenAttributesSeria
 
 namespace cryptobank.api.features.users.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IRefreshTokenAttributesSerializer))]
+[Singleton<IRefreshTokenAttributesSerializer>]
 internal class RefreshTokenAttributesSerializer : IRefreshTokenAttributesSerializer
 {
     private const string AttrIdField = "id";
