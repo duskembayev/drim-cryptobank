@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
-    <PackageReference Include="Enhanced.DependencyInjection" Version="1.0.1" />
     <InternalsVisibleTo Include="cryptobank.api.tests" />
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Enhanced.DependencyInjection" Version="1.2.0" />
     <PackageReference Include="FastEndpoints" Version="5.15.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="5.15.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
