@@ -7,7 +7,7 @@ using Attr = cryptobank.api.features.users.services.IRefreshTokenAttributesSeria
 
 namespace cryptobank.api.features.users.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IRefreshTokenStorage))]
+[Singleton<IRefreshTokenStorage>]
 internal class RefreshTokenStorage : IRefreshTokenStorage
 {
     private const int LockValueSize = 8;

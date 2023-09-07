@@ -2,7 +2,7 @@
 
 namespace cryptobank.api.features.users.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IPasswordStrengthValidator))]
+[Singleton<IPasswordStrengthValidator>]
 internal partial class PasswordStrengthValidator : IPasswordStrengthValidator
 {
     private static readonly Regex ValidationRegex = BuildValidationRegex();

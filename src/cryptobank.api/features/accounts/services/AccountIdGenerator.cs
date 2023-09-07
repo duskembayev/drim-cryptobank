@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace cryptobank.api.features.accounts.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IAccountIdGenerator))]
+[Singleton<IAccountIdGenerator>]
 internal class AccountIdGenerator : IAccountIdGenerator
 {
     private const int AccountIdLength = 18;

@@ -4,7 +4,7 @@ using Konscious.Security.Cryptography;
 
 namespace cryptobank.api.features.users.services;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(IPasswordHashAlgorithm))]
+[Singleton<IPasswordHashAlgorithm>]
 internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
 {
     private readonly IOptions<PasswordHashOptions> _options;
