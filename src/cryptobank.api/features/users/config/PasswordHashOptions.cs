@@ -1,5 +1,6 @@
 ﻿namespace cryptobank.api.features.users.config;
 
+[Options("Users:PasswordHash")]
 public class PasswordHashOptions
 {
     public int DegreeOfParallelism { get; set; } = 16;

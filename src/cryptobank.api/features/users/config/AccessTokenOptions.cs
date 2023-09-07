@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace cryptobank.api.features.users.config;
 
+[Options("Users:AccessToken")]
 public class AccessTokenOptions : AuthenticationSchemeOptions
 {
     public AccessTokenOptions()

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
-using cryptobank.api.Enhanced.DependencyInjection;
 using cryptobank.api.features.accounts;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
@@ -18,7 +17,6 @@ appBuilder
 
 appBuilder.Services
     .AddRedis()
-    .AddEnhancedModules()
     .AddFastEndpoints()
     .SwaggerDocument(options =>
     {
@@ -31,6 +29,7 @@ appBuilder.Services
             .RegisterServicesFromAssembly(thisAssembly)
             .AddOpenBehavior(typeof(RequestValidationBehavior<,>));
     })
+    .AddEnhancedModules(appBuilder.Configuration.GetSection("Features"))
     .AddDbContext(appBuilder.Configuration)
     .AddValidatorsFromAssembly(thisAssembly);
 
