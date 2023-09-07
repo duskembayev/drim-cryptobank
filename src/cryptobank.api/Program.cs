@@ -17,7 +17,6 @@ appBuilder
 
 appBuilder.Services
     .AddRedis()
-    .AddEnhancedModules()
     .AddFastEndpoints()
     .SwaggerDocument(options =>
     {
@@ -30,6 +29,7 @@ appBuilder.Services
             .RegisterServicesFromAssembly(thisAssembly)
             .AddOpenBehavior(typeof(RequestValidationBehavior<,>));
     })
+    .AddEnhancedModules(appBuilder.Configuration.GetSection("Features"))
     .AddDbContext(appBuilder.Configuration)
     .AddValidatorsFromAssembly(thisAssembly);
 

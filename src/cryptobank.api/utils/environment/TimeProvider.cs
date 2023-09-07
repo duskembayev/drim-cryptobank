@@ -2,7 +2,7 @@
 
 namespace cryptobank.api.utils.environment;
 
-[ContainerEntry(ServiceLifetime.Singleton, typeof(ITimeProvider))]
+[Singleton<ITimeProvider>]
 internal sealed class TimeProvider : ITimeProvider
 {
     private readonly ISystemClock _systemClock;
