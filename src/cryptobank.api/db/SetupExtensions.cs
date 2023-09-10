@@ -27,14 +27,10 @@ public static class SetupExtensions
 
     public static IServiceCollection AddDbContext(this IServiceCollection @this, IConfiguration configuration)
     {
-        var npgsqlConnectionString = configuration.GetNpgsqlConnectionString();
-        @this.AddDbContext<CryptoBankDbContext>(options => options.UseNpgsql(npgsqlConnectionString));
+        @this.AddDbContext<CryptoBankDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString(ConnectionStringName));
+        });
         return @this;
-    }
-
-    private static string GetNpgsqlConnectionString(this IConfiguration @this)
-    {
-        return @this.GetConnectionString(ConnectionStringName)
-               ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' not found");
     }
 }

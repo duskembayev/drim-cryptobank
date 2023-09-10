@@ -9,9 +9,9 @@ public class ChangeRoleRequest : IRequest
 
     public class Validator : AbstractValidator<ChangeRoleRequest>
     {
-        public Validator()
+        public Validator(CryptoBankDbContext dbContext)
         {
-            RuleFor(request => request.UserId).ValidUserId();
+            RuleFor(request => request.UserId).ValidUserId(dbContext);
 
             RuleFor(request => request.Roles)
                 .NotEmpty()

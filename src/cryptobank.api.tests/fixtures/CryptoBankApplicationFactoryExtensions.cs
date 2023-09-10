@@ -3,26 +3,11 @@ using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace cryptobank.api.tests;
+namespace cryptobank.api.tests.fixtures;
 
 internal static class CryptoBankApplicationFactoryExtensions
 {
-    public static async ValueTask<User> InitializeWithAuthorizationAsync(
-        this CryptoBankApplicationFactory factory,
-        string email = "harrypotter@hogwards.edu.uk",
-        string password = "C@putDrac0nis",
-        string roleName = Role.User)
-    {
-        var user = await WithUser(factory, email, password, roleName);
-
-        factory.AccessToken = factory.Services
-            .GetRequiredService<IAccessTokenProvider>()
-            .Issue(user);
-
-        return user;
-    }
-
-    private static async ValueTask<User> WithUser(
+    public static async ValueTask<User> CreateUserAsync(
         this CryptoBankApplicationFactory factory,
         string email = "harrypotter@hogwards.edu.uk",
         string password = "C@putDrac0nis",
@@ -40,7 +25,7 @@ internal static class CryptoBankApplicationFactoryExtensions
         {
             Email = email,
             PasswordHash = await hashAlgorithm.HashAsync(password),
-            Roles = { role },
+            Roles = {role},
             DateOfBirth = new DateOnly(1980, 7, 31),
             DateOfRegistration = new DateTime(1999, 6, 30, 4, 31, 48, DateTimeKind.Utc)
         };
@@ -49,5 +34,14 @@ internal static class CryptoBankApplicationFactoryExtensions
         await dbContext.SaveChangesAsync();
 
         return user;
+    }
+
+    public static async ValueTask RemoveUserAsync(this CryptoBankApplicationFactory factory, User user)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
+
+        dbContext.Remove(user);
+        await dbContext.SaveChangesAsync();
     }
 }

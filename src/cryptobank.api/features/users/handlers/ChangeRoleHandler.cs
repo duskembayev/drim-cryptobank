@@ -18,14 +18,12 @@ public class ChangeRoleHandler : IRequestHandler<ChangeRoleRequest>
             .Include(u => u.Roles)
             .SingleAsync(u => u.Id == request.UserId, cancellationToken);
 
-        user.Roles.Clear();
+        var newRoles = _dbContext.Roles
+            .ToList()
+            .Where(r => request.Roles.Contains(r.Name, StringComparer.OrdinalIgnoreCase));
 
-        foreach (var roleName in request.Roles)
-        {
-            var role = Role.Detached.GetByName(roleName);
-            user.Roles.Add(role);
-            _dbContext.AttachRange(role);
-        }
+        user.Roles.Clear();
+        foreach (var role in newRoles) user.Roles.Add(role);
 
         _dbContext.Update(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
