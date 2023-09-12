@@ -13,7 +13,7 @@ public class LoginUserRequest : IRequest<TokenResponse>
         public Validator()
         {
             RuleFor(x => x.Email)
-                .EmailAddress()
+                .NotEmpty()
                 .WithErrorCode("users:login:email_empty")
                 .WithMessage("Email is required");
 
