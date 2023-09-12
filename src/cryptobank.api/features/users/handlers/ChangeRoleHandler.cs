@@ -1,4 +1,3 @@
-using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 
 namespace cryptobank.api.features.users.handlers;

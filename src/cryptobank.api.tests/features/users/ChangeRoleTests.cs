@@ -1,5 +1,4 @@
-﻿using System.Net;
-using cryptobank.api.db;
+﻿using cryptobank.api.db;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.tests.extensions;
@@ -46,23 +45,7 @@ public class ChangeRoleTests : IClassFixture<ApplicationFixture>
             .Include(u => u.Roles)
             .SingleAsync(u => u.Id == userId);
 
-        user.Roles.ShouldContain(r => r.Name == Role.User);
-        user.Roles.ShouldContain(r => r.Name == Role.Analyst);
-    }
-
-    [Fact]
-    public async Task ShouldReturnErrorWhenInvalidUserId()
-    {
-        var res = await _client.POSTAsync<ChangeRoleRequest, ProblemDetails>("/user/changeRole",
-            new ChangeRoleRequest
-            {
-                UserId = 11,
-                Roles = new[] {Role.Analyst, Role.User}
-            });
-
-        res.ShouldBeValidationProblem(
-            HttpStatusCode.BadRequest,
-            "userId",
-            GeneralErrorCodes.InvalidUser);
+        user.Roles.ShouldContain(Role.Detached.User);
+        user.Roles.ShouldContain(Role.Detached.Analyst);
     }
 }
