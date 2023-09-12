@@ -3,7 +3,6 @@ using cryptobank.api.db;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.tests.extensions;
-using cryptobank.api.tests.fixtures;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

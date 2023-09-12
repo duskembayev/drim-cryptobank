@@ -1,5 +1,4 @@
 using cryptobank.api.features.users.requests;
-using FluentValidation.TestHelper;
 
 namespace cryptobank.api.tests.features.users;
 

@@ -2,7 +2,6 @@
 using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.responses;
 using cryptobank.api.tests.extensions;
-using cryptobank.api.tests.fixtures;
 using FastEndpoints;
 using Shouldly;
 

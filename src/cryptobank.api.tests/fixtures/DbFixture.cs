@@ -21,7 +21,7 @@ public class DbFixture : IAsyncLifetime
         DbContext = new CryptoBankDbContext(options);
     }
 
-    private CryptoBankDbContext DbContext { get; }
+    public CryptoBankDbContext DbContext { get; }
 
     public async Task InitializeAsync()
     {
