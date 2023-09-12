@@ -32,6 +32,7 @@ internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Progr
                 };
                 configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
                 {
+                    ["WARMUP_TIMEOUT"] = "0",
                     ["ConnectionStrings:postgres"] = npgConnStringBuilder.ConnectionString
                 });
             });
