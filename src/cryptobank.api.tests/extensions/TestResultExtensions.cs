@@ -14,6 +14,7 @@ public static class TestResultExtensions
         ShouldBeWithStatus(res, HttpStatusCode.OK);
     }
 
+    [ContractAnnotation("res:null => halt")]
     public static void ShouldBeProblem(this TestResult<ProblemDetails> res, HttpStatusCode statusCode, string code)
     {
         ShouldBeWithStatus(res, statusCode);
