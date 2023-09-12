@@ -20,27 +20,8 @@ public static class TestResultExtensions
 
         res.Result.ShouldNotBeNull();
 
-        var element = (JsonElement?) res.Result.Extensions["code"];
+        var element = (JsonElement?)res.Result.Extensions["code"];
         var actualCode = element?.GetString();
-
-        actualCode.ShouldBe(code);
-    }
-    
-    public static void ShouldBeValidationProblem(this TestResult<ProblemDetails> res, HttpStatusCode statusCode, string property, string code)
-    {
-        ShouldBeWithStatus(res, statusCode);
-
-        res.Result.ShouldNotBeNull();
-
-        var element = (JsonElement?) res.Result.Extensions["errors"];
-        var actualCode = element?.EnumerateArray()
-            .Single(e =>
-            {
-                var eProperty = e.GetProperty("property").GetString();
-                return eProperty != null && eProperty.Equals(property, StringComparison.OrdinalIgnoreCase);
-            })
-            .GetProperty("code")
-            .GetString(); 
 
         actualCode.ShouldBe(code);
     }

@@ -27,10 +27,6 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserRequest, int>
     public async Task<int> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var email = request.Email.ToLowerInvariant();
-
-        if (await _dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
-            throw new LogicException("users:register:user_exists", "User already exists");
-
         var role = await GetRoleAsync(email, cancellationToken);
         var passwordHash = await _passwordHashAlgorithm.HashAsync(request.Password);
 

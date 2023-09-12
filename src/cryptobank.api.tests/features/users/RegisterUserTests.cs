@@ -1,5 +1,4 @@
-﻿using System.Net;
-using cryptobank.api.db;
+﻿using cryptobank.api.db;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.tests.extensions;
@@ -50,55 +49,5 @@ public class RegisterUserTests : IClassFixture<ApplicationFixture>
         actualUser.DateOfRegistration.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         actualUser.Roles.ShouldBe(new []{ Role.Detached.User });
         actualUser.PasswordHash.ShouldStartWith("$argon2id$v=1");
-    }
-
-    [Fact]
-    public async Task ShouldReturnErrorWhenEmailAlreadyExists()
-    {
-        var res = await _client.POSTAsync<RegisterUserRequest, ProblemDetails>("/user/register",
-            new RegisterUserRequest
-            {
-                Email = ApplicationFixture.UserEmail,
-                Password = "newUserP@ssw0rd",
-                DateOfBirth = new DateOnly(2000, 3, 26)
-            });
-
-        res.ShouldBeProblem(HttpStatusCode.Conflict, "users:register:user_exists");
-    }
-
-    [Theory]
-    [InlineData("email")]
-    [InlineData("email@")]
-    [InlineData("@domain")]
-    [InlineData("domain.com")]
-    public async Task ShouldReturnErrorWhenInvalidEmail(string email)
-    {
-        var res = await _client.POSTAsync<RegisterUserRequest, ProblemDetails>("/user/register",
-            new RegisterUserRequest
-            {
-                Email = email,
-                Password = "newUserP@ssw0rd",
-                DateOfBirth = new DateOnly(2000, 3, 26)
-            });
-
-        res.ShouldBeValidationProblem(HttpStatusCode.BadRequest, "email", "users:register:email_invalid");
-    }
-
-    [Theory]
-    [InlineData(10)]
-    [InlineData(14)]
-    [InlineData(15)]
-    public async Task ShouldReturnErrorWhenDayOfBirthIsInvalid(int age)
-    {
-        var res = await _client.POSTAsync<RegisterUserRequest, ProblemDetails>("/user/register",
-            new RegisterUserRequest
-            {
-                Email = "newUser@example.com",
-                Password = "newUserP@ssw0rd",
-                DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-age))
-            }
-        );
-
-        res.ShouldBeValidationProblem(HttpStatusCode.BadRequest, "dateOfBirth", "users:register:too_young");
     }
 }

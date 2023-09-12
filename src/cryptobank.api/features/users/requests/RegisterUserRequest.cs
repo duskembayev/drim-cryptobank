@@ -14,6 +14,7 @@ public class RegisterUserRequest : IRequest<int>
         public Validator(
             IPasswordStrengthValidator passwordStrengthValidator,
             ITimeProvider timeProvider,
+            CryptoBankDbContext dbContext,
             IOptions<RegisterUserOptions> options)
         {
             RuleFor(x => x.Email)
@@ -21,6 +22,12 @@ public class RegisterUserRequest : IRequest<int>
                 .EmailAddress()
                 .WithErrorCode("users:register:email_invalid")
                 .WithMessage("Email is not valid");
+
+            RuleFor(x => x.Email)
+                .NotEmpty()
+                .MustAsync(async (s, token) => !await dbContext.Users.AnyAsync(u => u.Email == s, token))
+                .WithErrorCode("users:register:user_exists")
+                .WithMessage("User already exists");
 
             RuleFor(x => x.Password)
                 .NotEmpty()
