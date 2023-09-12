@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using cryptobank.api.db;
+using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.tests.extensions;
 using cryptobank.api.tests.fixtures;
@@ -39,10 +40,17 @@ public class RegisterUserTests : IClassFixture<ApplicationFixture>
 
         using var scope = _fixture.AppFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        var actualUser = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == newUserEmail);
+
+        var actualUser = await dbContext.Users
+            .Include(u => u.Roles)
+            .SingleOrDefaultAsync(u => u.Email == newUserEmail);
 
         actualUser.ShouldNotBeNull();
+        actualUser.Email.ShouldBe(newUserEmail);
         actualUser.DateOfBirth.ShouldBe(newUserBirthday);
+        actualUser.DateOfRegistration.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        actualUser.Roles.ShouldBe(new []{ Role.Detached.User });
+        actualUser.PasswordHash.ShouldStartWith("$argon2id$v=1");
     }
 
     [Fact]
