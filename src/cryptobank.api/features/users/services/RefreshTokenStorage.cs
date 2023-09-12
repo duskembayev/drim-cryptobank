@@ -1,6 +1,5 @@
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
 using cryptobank.api.features.users.config;
 using cryptobank.api.redis;
 using StackExchange.Redis;
