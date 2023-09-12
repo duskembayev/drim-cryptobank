@@ -7,16 +7,18 @@ namespace cryptobank.api.features.users.services;
 [Singleton<IPasswordHashAlgorithm>]
 internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
 {
+    private readonly IRndBytesGenerator _rndBytesGenerator;
     private readonly IOptions<PasswordHashOptions> _options;
 
-    public PasswordHashAlgorithm(IOptions<PasswordHashOptions> options)
+    public PasswordHashAlgorithm(IRndBytesGenerator rndBytesGenerator, IOptions<PasswordHashOptions> options)
     {
+        _rndBytesGenerator = rndBytesGenerator;
         _options = options;
     }
 
     public async Task<string> HashAsync(string password)
     {
-        var salt = GenerateSalt(_options.Value.SaltSize);
+        var salt = _rndBytesGenerator.GetBytes(_options.Value.SaltSize);
         var hash = await ComputeHashAsync(
             Encoding.UTF8.GetBytes(password), salt,
             _options.Value.HashSize,
@@ -58,14 +60,6 @@ internal sealed class PasswordHashAlgorithm : IPasswordHashAlgorithm
         };
 
         return await argon2.GetBytesAsync(hashSize);
-    }
-
-    private static byte[] GenerateSalt(int length)
-    {
-        var salt = new byte[length];
-        using var generator = RandomNumberGenerator.Create();
-        generator.GetBytes(salt);
-        return salt;
     }
 
     private static string FormatHash(byte[] hash, byte[] salt, int degreeOfParallelism, int iterations, int memorySize)

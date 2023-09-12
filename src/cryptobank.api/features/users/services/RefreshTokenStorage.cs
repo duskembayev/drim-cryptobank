@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using cryptobank.api.features.users.config;
@@ -13,16 +14,19 @@ internal sealed class RefreshTokenStorage : IRefreshTokenStorage
     private const int LockValueSize = 8;
 
     private readonly IRefreshTokenAttributesSerializer _attributesSerializer;
+    private readonly IRndBytesGenerator _rndBytesGenerator;
     private readonly IOptions<RefreshTokenOptions> _options;
     private readonly IRedisConnection _redisConnection;
 
     public RefreshTokenStorage(
         IRedisConnection redisConnection,
         IRefreshTokenAttributesSerializer attributesSerializer,
+        IRndBytesGenerator rndBytesGenerator,
         IOptions<RefreshTokenOptions> options)
     {
         _redisConnection = redisConnection;
         _attributesSerializer = attributesSerializer;
+        _rndBytesGenerator = rndBytesGenerator;
         _options = options;
     }
 
@@ -172,11 +176,18 @@ internal sealed class RefreshTokenStorage : IRefreshTokenStorage
         return $"u{userId:D5}:{token}";
     }
 
-    private static string RandomValue(int size)
+    private string RandomValue(int size)
     {
-        var buffer = new byte[size];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(buffer);
-        return Convert.ToBase64String(buffer);
+        var buffer = ArrayPool<byte>.Shared.Rent(size);
+
+        try
+        {
+            _rndBytesGenerator.Fill(buffer.AsSpan()[..size]);
+            return Convert.ToBase64String(buffer, 0, size);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 }
