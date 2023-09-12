@@ -23,7 +23,7 @@ public class ApplicationFixture : IAsyncLifetime
         set => _administrator = value;
     }
 
-    internal CryptoBankApplicationFactory AppFactory { get; } = CryptoBankApplicationFactory.CreateWithRndDatabase();
+    internal CryptoBankApplicationFactory AppFactory { get; } = new();
 
 
     async Task IAsyncLifetime.InitializeAsync()

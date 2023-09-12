@@ -1,17 +1,16 @@
 using System.Net.Http.Headers;
 using cryptobank.api.features.users.services;
+using cryptobank.api.tests.extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Npgsql;
 
 namespace cryptobank.api.tests.fixtures;
 
 internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Program>
 {
     public string? AccessToken { get; set; }
-    public string? Database { get; init; }
 
     public Task InitializeAsync()
     {
@@ -21,22 +20,14 @@ internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Progr
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        if (Database is not null)
+        builder.ConfigureAppConfiguration((context, configurationBuilder) =>
         {
-            builder.ConfigureAppConfiguration((context, configurationBuilder) =>
+            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                var npgConnString = context.Configuration["ConnectionStrings:postgres"];
-                var npgConnStringBuilder = new NpgsqlConnectionStringBuilder(npgConnString)
-                {
-                    Database = Database
-                };
-                configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["WARMUP_TIMEOUT"] = "0",
-                    ["ConnectionStrings:postgres"] = npgConnStringBuilder.ConnectionString
-                });
+                ["WARMUP_TIMEOUT"] = "0",
+                ["ConnectionStrings:postgres"] = context.Configuration.GetConnectionStringWithRndDatabase()
             });
-        }
+        });
 
         builder.UseEnvironment(Environments.Development);
     }
@@ -48,13 +39,5 @@ internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Progr
         if (AccessToken is not null)
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue(AccessTokenConstants.Bearer, AccessToken);
-    }
-
-    public static CryptoBankApplicationFactory CreateWithRndDatabase()
-    {
-        return new CryptoBankApplicationFactory
-        {
-            Database = "db_" + Guid.NewGuid().ToString("N")
-        };
     }
 }
