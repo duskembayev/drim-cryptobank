@@ -4,9 +4,12 @@ public static class SetupExtensions
 {
     private const string ConnectionStringName = "postgres";
 
-    public static async Task RestoreDatabaseAsync(this WebApplication @this, int dbWarmupTimeout)
+    public static async Task RestoreDatabaseAsync(this WebApplication @this)
     {
-        await Task.Delay(dbWarmupTimeout);
+        var warmupTimeout = @this.Configuration.GetValue<int?>("WARMUP_TIMEOUT") ?? 500;
+        
+        if (warmupTimeout > 0)
+            await Task.Delay(warmupTimeout);
 
         using var serviceScope = @this.Services.CreateScope();
 
@@ -27,14 +30,10 @@ public static class SetupExtensions
 
     public static IServiceCollection AddDbContext(this IServiceCollection @this, IConfiguration configuration)
     {
-        var npgsqlConnectionString = configuration.GetNpgsqlConnectionString();
-        @this.AddDbContext<CryptoBankDbContext>(options => options.UseNpgsql(npgsqlConnectionString));
+        @this.AddDbContext<CryptoBankDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString(ConnectionStringName));
+        });
         return @this;
-    }
-
-    private static string GetNpgsqlConnectionString(this IConfiguration @this)
-    {
-        return @this.GetConnectionString(ConnectionStringName)
-               ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' not found");
     }
 }

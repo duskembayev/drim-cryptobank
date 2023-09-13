@@ -45,5 +45,5 @@ app.UseFastEndpoints(c =>
 });
 app.UseSwaggerGen();
 
-await app.RestoreDatabaseAsync(500);
+await app.RestoreDatabaseAsync();
 await app.RunAsync();

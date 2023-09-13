@@ -2,7 +2,7 @@
 
 namespace cryptobank.api.features.users.domain;
 
-public class Role
+public record Role
 {
     public const string User = "User";
     public const string Analyst = "Analyst";
@@ -32,12 +32,16 @@ public class Role
             Name = Role.Administrator
         };
 
-        public static readonly ImmutableArray<Role> All = ImmutableArray.Create(User, Analyst, Administrator); 
+        public static readonly ImmutableArray<Role> All = ImmutableArray.Create(User, Analyst, Administrator);
 
         public static Role GetByName(string name)
-            => All.Single(role => role.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        {
+            return All.Single(role => role.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
 
         public static bool Exists(string name)
-            => All.Any(role => role.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        {
+            return All.Any(role => role.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
