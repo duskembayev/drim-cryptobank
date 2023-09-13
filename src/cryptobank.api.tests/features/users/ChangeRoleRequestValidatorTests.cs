@@ -1,7 +1,6 @@
 using cryptobank.api.db;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
-using Microsoft.EntityFrameworkCore;
 
 namespace cryptobank.api.tests.features.users;
 

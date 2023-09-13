@@ -1,6 +1,14 @@
-﻿global using cryptobank.api.errors;
+﻿global using System.Net;
+global using cryptobank.api.errors;
 global using cryptobank.api.tests.fixtures;
+global using FastEndpoints;
 global using FluentValidation.TestHelper;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Options;
+global using NSubstitute;
+global using NSubstitute.ExceptionExtensions;
+global using Shouldly;
 global using Xunit;
 global using SecurityException = cryptobank.api.errors.exceptions.SecurityException;
 global using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;

@@ -1,7 +1,5 @@
 using cryptobank.api.features.users.responses;
 using cryptobank.api.tests.extensions;
-using FastEndpoints;
-using Shouldly;
 
 namespace cryptobank.api.tests.features.users;
 

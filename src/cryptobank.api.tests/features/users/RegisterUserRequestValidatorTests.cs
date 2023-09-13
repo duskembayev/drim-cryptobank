@@ -2,8 +2,6 @@ using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.features.users.services;
 using cryptobank.api.utils.environment;
-using Microsoft.Extensions.Options;
-using NSubstitute;
 
 namespace cryptobank.api.tests.features.users;
 

@@ -1,10 +1,6 @@
 using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.services;
 using cryptobank.api.utils.environment;
-using Microsoft.Extensions.Options;
-using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using Shouldly;
 
 namespace cryptobank.api.tests.features.users.services;
 

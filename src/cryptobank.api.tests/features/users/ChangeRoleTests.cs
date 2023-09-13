@@ -2,10 +2,6 @@
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.requests;
 using cryptobank.api.tests.extensions;
-using FastEndpoints;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
 
 namespace cryptobank.api.tests.features.users;
 
