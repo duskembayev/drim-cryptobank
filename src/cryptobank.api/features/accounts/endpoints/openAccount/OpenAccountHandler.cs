@@ -2,16 +2,16 @@
 using cryptobank.api.features.accounts.domain;
 using cryptobank.api.features.accounts.services;
 
-namespace cryptobank.api.features.accounts.endpoints.createAccount;
+namespace cryptobank.api.features.accounts.endpoints.openAccount;
 
-public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, string>
+public class OpenAccountHandler : IRequestHandler<OpenAccountRequest, string>
 {
     private readonly IAccountIdGenerator _accountIdGenerator;
     private readonly CryptoBankDbContext _dbContext;
     private readonly IOptions<AccountsOptions> _options;
     private readonly ITimeProvider _timeProvider;
 
-    public CreateAccountHandler(
+    public OpenAccountHandler(
         CryptoBankDbContext dbContext,
         IAccountIdGenerator accountIdGenerator,
         ITimeProvider timeProvider,
@@ -23,7 +23,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, string
         _options = options;
     }
 
-    public async Task<string> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(OpenAccountRequest request, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users
             .Include(user => user.Accounts)
