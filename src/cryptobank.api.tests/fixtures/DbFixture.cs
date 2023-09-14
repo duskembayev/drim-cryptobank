@@ -1,6 +1,5 @@
 using cryptobank.api.db;
 using cryptobank.api.tests.extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace cryptobank.api.tests.fixtures;

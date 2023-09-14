@@ -2,10 +2,7 @@ using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.services;
 using cryptobank.api.utils.environment;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
-using NSubstitute;
-using Shouldly;
 
 namespace cryptobank.api.tests.features.users.services;
 

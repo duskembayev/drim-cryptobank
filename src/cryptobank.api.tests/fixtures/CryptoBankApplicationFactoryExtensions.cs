@@ -1,7 +1,6 @@
 using cryptobank.api.db;
 using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace cryptobank.api.tests.fixtures;
 

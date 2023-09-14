@@ -1,8 +1,5 @@
-﻿using System.Net;
-using System.Text.Json;
-using FastEndpoints;
+﻿using System.Text.Json;
 using JetBrains.Annotations;
-using Shouldly;
 
 namespace cryptobank.api.tests.extensions;
 
