@@ -1,4 +1,5 @@
-﻿using cryptobank.api.features.news.domain;
+﻿using cryptobank.api.features.accounts.domain;
+using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 
 namespace cryptobank.api.db;
@@ -54,6 +55,19 @@ internal static class PredefinedDataSeed
                 Roles = { Role.Detached.User },
                 PasswordHash =
                     "$argon2id$v=1$m=8162,t=40,p=8$f1DHhWRqfmwpbs8DbfJrlbYLwdrXXUQu/35DBvwVnOSEbkOdsNBLHEzwKd6lNCamlQsklnrKlIb69LN1EQV31Q==$Kdq41XSqA1C8RThSbWCZZ2ZuOI66S/Yvos1LZSOrul7Bdi7n2wJEaKF69Q+CW7MJKR3wcU3oAlwyiiHOXMU25bmEDakYy4IN7xU7DYYZlNiN0WHKH6L6mwNjED71dTfgq3ORIkL5wT1guoZzyDCtF9VmTYf2yffLg2HZaKvC7Ds=",
+                Accounts =
+                {
+                    new Account
+                    {
+                        AccountId = "g-leela-1",
+                        DateOfOpening = new DateTime(2020, 1, 5, 10, 11, 12, DateTimeKind.Utc)
+                    },
+                    new Account
+                    {
+                        AccountId = "g-leela-2",
+                        DateOfOpening = new DateTime(2020, 1, 1, 10, 11, 12, DateTimeKind.Utc)
+                    }
+                }
             });
 
         dbContext.Users
@@ -65,6 +79,19 @@ internal static class PredefinedDataSeed
                 Roles = { Role.Detached.User },
                 PasswordHash =
                     "$argon2id$v=1$m=8162,t=40,p=8$f1DHhWRqfmwpbs8DbfJrlbYLwdrXXUQu/35DBvwVnOSEbkOdsNBLHEzwKd6lNCamlQsklnrKlIb69LN1EQV31Q==$Kdq41XSqA1C8RThSbWCZZ2ZuOI66S/Yvos1LZSOrul7Bdi7n2wJEaKF69Q+CW7MJKR3wcU3oAlwyiiHOXMU25bmEDakYy4IN7xU7DYYZlNiN0WHKH6L6mwNjED71dTfgq3ORIkL5wT1guoZzyDCtF9VmTYf2yffLg2HZaKvC7Ds=",
+                Accounts =
+                {
+                    new Account
+                    {
+                        AccountId = "g-fry-1",
+                        DateOfOpening = new DateTime(2020, 1, 4, 10, 11, 12, DateTimeKind.Utc)
+                    },
+                    new Account
+                    {
+                        AccountId = "g-fry-2",
+                        DateOfOpening = new DateTime(2020, 1, 5, 10, 11, 12, DateTimeKind.Utc)
+                    }
+                }
             });
 
         dbContext.Users
@@ -76,6 +103,19 @@ internal static class PredefinedDataSeed
                 Roles = { Role.Detached.User },
                 PasswordHash =
                     "$argon2id$v=1$m=8162,t=40,p=8$f1DHhWRqfmwpbs8DbfJrlbYLwdrXXUQu/35DBvwVnOSEbkOdsNBLHEzwKd6lNCamlQsklnrKlIb69LN1EQV31Q==$Kdq41XSqA1C8RThSbWCZZ2ZuOI66S/Yvos1LZSOrul7Bdi7n2wJEaKF69Q+CW7MJKR3wcU3oAlwyiiHOXMU25bmEDakYy4IN7xU7DYYZlNiN0WHKH6L6mwNjED71dTfgq3ORIkL5wT1guoZzyDCtF9VmTYf2yffLg2HZaKvC7Ds=",
+                Accounts =
+                {
+                    new Account
+                    {
+                        AccountId = "g-zoidberg-1",
+                        DateOfOpening = new DateTime(2020, 1, 1, 10, 11, 12, DateTimeKind.Utc)
+                    },
+                    new Account
+                    {
+                        AccountId = "g-zoidberg-2",
+                        DateOfOpening = new DateTime(2020, 1, 1, 10, 11, 12, DateTimeKind.Utc)
+                    }
+                }
             });
 
         await dbContext.SaveChangesAsync();

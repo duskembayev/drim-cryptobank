@@ -7,7 +7,7 @@ public sealed class RequestValidationBehavior<TRequest, TResponse> : IPipelineBe
 {
     private readonly IValidator<TRequest>? _validator;
 
-    public RequestValidationBehavior(IValidator<TRequest>? validator)
+    public RequestValidationBehavior(IValidator<TRequest>? validator = null)
     {
         _validator = validator;
     }
