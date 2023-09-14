@@ -51,8 +51,20 @@ public class ApplicationFixture : IAsyncLifetime
         await AppFactory.DisposeAsync();
     }
 
-    public HttpClient CreateClient()
+    public HttpClient CreateClient(User? user = null)
     {
-        return AppFactory.CreateClient();
+        var accessToken = AppFactory.AccessToken;
+
+        try
+        {
+            if (user != null)
+                this.Authorize(user);
+
+            return AppFactory.CreateClient();
+        }
+        finally
+        {
+            AppFactory.AccessToken = accessToken;
+        }
     }
 }

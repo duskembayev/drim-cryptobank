@@ -5,12 +5,13 @@ namespace cryptobank.api.tests.features.accounts.endpoints;
 
 public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>
 {
+    private readonly ApplicationFixture _fixture;
     private readonly HttpClient _client;
 
     public ReportOpenedDailyTests(ApplicationFixture fixture)
     {
-        fixture.Authorize(fixture.Analyst);
-        _client = fixture.CreateClient();
+        _fixture = fixture;
+        _client = _fixture.CreateClient(fixture.Analyst);
     }
 
     [Fact]
@@ -31,5 +32,35 @@ public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>
             new OpenedDailyModel(new DateOnly(2020, 1, 4), 1),
             new OpenedDailyModel(new DateOnly(2020, 1, 5), 2),
         });
+    }
+
+    [Fact]
+    public async Task ShouldNotReturnReportWhenUserIsAdministrator()
+    {
+        using var adminClient = _fixture.CreateClient(_fixture.Administrator);
+
+        var result = await adminClient.GETAsync<ReportOpenedDailyRequest, IReadOnlyCollection<OpenedDailyModel>>(
+            "/accounts/reports/openedDaily", new ReportOpenedDailyRequest
+            {
+                Start = new DateOnly(2020, 1, 1),
+                End = new DateOnly(2020, 1, 5),
+            });
+        
+        result.ShouldBeWithStatus(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task ShouldNotReturnReportWhenUserIsUser()
+    {
+        using var userClient = _fixture.CreateClient(_fixture.User);
+
+        var result = await userClient.GETAsync<ReportOpenedDailyRequest, IReadOnlyCollection<OpenedDailyModel>>(
+            "/accounts/reports/openedDaily", new ReportOpenedDailyRequest
+            {
+                Start = new DateOnly(2020, 1, 1),
+                End = new DateOnly(2020, 1, 5),
+            });
+        
+        result.ShouldBeWithStatus(HttpStatusCode.Forbidden);
     }
 }
