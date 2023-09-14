@@ -11,9 +11,7 @@ public class GetProfileTests : IClassFixture<ApplicationFixture>
     public GetProfileTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-
-        _fixture.Authorize(_fixture.User);
-        _client = _fixture.CreateClient();
+        _client = _fixture.CreateClient(_fixture.User);
     }
 
     [Fact]
