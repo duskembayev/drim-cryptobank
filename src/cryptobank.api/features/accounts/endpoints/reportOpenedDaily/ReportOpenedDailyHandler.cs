@@ -19,6 +19,7 @@ public class ReportOpenedDailyHandler : IRequestHandler<ReportOpenedDailyRequest
         return await _dbContext.Accounts
             .Where(a => a.DateOfOpening >= startInclusive && a.DateOfOpening < endExclusive)
             .GroupBy(a => a.DateOfOpening.Date)
+            .OrderBy(g => g.Key)
             .Select(g => new OpenedDailyModel(DateOnly.FromDateTime(g.Key), g.Count()))
             .ToListAsync(cancellationToken);
     }
