@@ -25,6 +25,7 @@ internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Progr
             configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["WARMUP_TIMEOUT"] = "0",
+                ["Features:Accounts:MaxAccountsPerUser"] = "2",
                 ["ConnectionStrings:postgres"] = context.Configuration.GetConnectionStringWithRndDatabase()
             });
         });
