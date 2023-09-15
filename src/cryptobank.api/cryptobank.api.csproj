@@ -14,8 +14,4 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="features\accounts\endpoints\" />
-  </ItemGroup>
 </Project>

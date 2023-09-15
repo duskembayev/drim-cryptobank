@@ -8,7 +8,10 @@ public class ApplicationFixture : IAsyncLifetime
     public const string UserPassword = "userP@s$w0rd";
     public const string AdministratorEmail = "admin@example.com";
     public const string AdministratorPassword = "adminP@s$w0rd";
+    public const string AnalystEmail = "analyst@example.com";
+    public const string AnalystPassword = "analystP@s$w0rd";
     private User? _administrator;
+    private User? _analyst;
     private User? _user;
 
     public User User
@@ -23,17 +26,24 @@ public class ApplicationFixture : IAsyncLifetime
         set => _administrator = value;
     }
 
-    internal CryptoBankApplicationFactory AppFactory { get; } = new();
+    public User Analyst
+    {
+        get => _analyst ?? throw new InvalidOperationException();
+        set => _analyst = value;
+    }
 
+    internal CryptoBankApplicationFactory AppFactory { get; } = new();
 
     async Task IAsyncLifetime.InitializeAsync()
     {
         await AppFactory.InitializeAsync();
 
         User = await AppFactory.CreateUserAsync(
-            UserEmail, UserPassword, roleName: Role.User);
+            UserEmail, UserPassword, Role.User);
         Administrator = await AppFactory.CreateUserAsync(
-            AdministratorEmail, AdministratorPassword, roleName: Role.Administrator);
+            AdministratorEmail, AdministratorPassword, Role.Administrator);
+        Analyst = await AppFactory.CreateUserAsync(
+            AnalystEmail, AnalystPassword, Role.Analyst);
     }
 
     async Task IAsyncLifetime.DisposeAsync()
@@ -41,8 +51,20 @@ public class ApplicationFixture : IAsyncLifetime
         await AppFactory.DisposeAsync();
     }
 
-    public HttpClient CreateClient()
+    public HttpClient CreateClient(User? user = null)
     {
-        return AppFactory.CreateClient();
+        var accessToken = AppFactory.AccessToken;
+
+        try
+        {
+            if (user != null)
+                this.Authorize(user);
+
+            return AppFactory.CreateClient();
+        }
+        finally
+        {
+            AppFactory.AccessToken = accessToken;
+        }
     }
 }
