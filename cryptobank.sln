@@ -1,16 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptobank.api", "cryptobank.api\cryptobank.api.csproj", "{7A795260-E8F4-4BE4-AD22-A6B435736797}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptobank.api", "src\cryptobank.api\cryptobank.api.csproj", "{7A795260-E8F4-4BE4-AD22-A6B435736797}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{7D7DB4E4-BE03-4B0D-99E8-E62BD814ACE7}"
-	ProjectSection(SolutionItems) = preProject
-		..\Directory.Build.props = ..\Directory.Build.props
-		..\docker-compose.yml = ..\docker-compose.yml
-		..\Dockerfile = ..\Dockerfile
-		..\nuget.config = ..\nuget.config
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptobank.api.tests", "src\cryptobank.api.tests\cryptobank.api.tests.csproj", "{4562A293-21DA-4DED-B2ED-8FEC59840E76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptobank.api.tests", "cryptobank.api.tests\cryptobank.api.tests.csproj", "{4562A293-21DA-4DED-B2ED-8FEC59840E76}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEDD7779-31FC-4173-BC3D-5BA993BC8E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,5 +20,9 @@ Global
 		{4562A293-21DA-4DED-B2ED-8FEC59840E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4562A293-21DA-4DED-B2ED-8FEC59840E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4562A293-21DA-4DED-B2ED-8FEC59840E76}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A795260-E8F4-4BE4-AD22-A6B435736797} = {CEDD7779-31FC-4173-BC3D-5BA993BC8E02}
+		{4562A293-21DA-4DED-B2ED-8FEC59840E76} = {CEDD7779-31FC-4173-BC3D-5BA993BC8E02}
 	EndGlobalSection
 EndGlobal
