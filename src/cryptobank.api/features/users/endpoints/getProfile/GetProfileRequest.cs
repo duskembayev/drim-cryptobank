@@ -6,12 +6,4 @@ public class GetProfileRequest : IRequest<ProfileModel>
 {
     [FromClaim(AccessTokenConstants.ClaimsTypes.Id)]
     public int UserId { get; set; }
-
-    public class Validator : AbstractValidator<GetProfileRequest>
-    {
-        public Validator()
-        {
-            RuleFor(request => request.UserId).ValidUserId();
-        }
-    }
 }

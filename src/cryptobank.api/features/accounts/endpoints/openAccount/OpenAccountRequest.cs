@@ -16,7 +16,6 @@ public class OpenAccountRequest : IRequest<string>
         public Validator()
         {
             RuleFor(request => request.Currency).ValidEnumValue();
-            RuleFor(request => request.UserId).ValidUserId();
         }
     }
 }
