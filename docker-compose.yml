@@ -6,7 +6,7 @@ services:
       context: .
       target: api
     ports:
-      - "8080:5000"
+      - "8080:80"
     depends_on:
       - db
       - redis
@@ -32,13 +32,15 @@ services:
       REDIS_PASSWORD: "gj3rUcvs2"
   
   test:
-    image: mcr.microsoft.com/dotnet/sdk:7.0
+    build:
+      context: .
+      dockerfile: test.Dockerfile
     volumes:
-      - .:/app
+      - ./test-results:/test-results
     depends_on:
       - db
       - redis
     environment:
       CONNECTIONSTRINGS:POSTGRES: "Server=db;Port=5432;Database=cryptobank;User Id=postgres;Password=fh6Dj01s"
       CONNECTIONSTRINGS:REDIS: "redis:6379,password=gj3rUcvs2"
-    command: ["dotnet", "test", "/app/src/cryptobank.sln", "--logger:trx"]
+    command: ["dotnet", "test", "/test/cryptobank.sln", "--logger:trx", "--results-directory", "/test-results"]

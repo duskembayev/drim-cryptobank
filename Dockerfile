@@ -1,21 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-ARG CONFIGURATION=Release
 WORKDIR /build
+ARG CONFIGURATION=Release
 
-COPY ./src ./src
+COPY ./src/cryptobank.api/*.csproj ./src/cryptobank.api/
+COPY ./src/cryptobank.api.tests/*.csproj ./src/cryptobank.api.tests/
+COPY cryptobank.sln .
 COPY Directory.Build.props .
 COPY nuget.config .
 
-WORKDIR "./src"
-
 RUN dotnet restore
-RUN dotnet build --no-restore
-RUN dotnet test --no-build
-RUN dotnet publish "./cryptobank.api" -o ../out/api --no-build
+
+COPY ./src/ ./src/
+
+RUN dotnet publish ./src/cryptobank.api/cryptobank.api.csproj -o ./out/api/ --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS api
 WORKDIR /app
-EXPOSE 5000
 
 COPY --from=build /build/out/api .
 
