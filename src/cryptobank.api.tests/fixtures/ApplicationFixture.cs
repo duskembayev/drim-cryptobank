@@ -23,13 +23,13 @@ public class ApplicationFixture : IAsyncLifetime
     public User Administrator
     {
         get => _administrator ?? throw new InvalidOperationException();
-        set => _administrator = value;
+        private set => _administrator = value;
     }
 
     public User Analyst
     {
         get => _analyst ?? throw new InvalidOperationException();
-        set => _analyst = value;
+        private set => _analyst = value;
     }
 
     internal CryptoBankApplicationFactory AppFactory { get; } = new();

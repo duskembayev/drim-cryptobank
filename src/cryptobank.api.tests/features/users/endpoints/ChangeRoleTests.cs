@@ -13,9 +13,7 @@ public class ChangeRoleTests : IClassFixture<ApplicationFixture>
     public ChangeRoleTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-
-        _fixture.Authorize(_fixture.Administrator);
-        _client = fixture.CreateClient();
+        _client = fixture.CreateClient(_fixture.Administrator);
     }
 
     [Fact]
