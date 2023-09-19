@@ -9,6 +9,6 @@ public enum Currency
     JPY,
     CNY,
     RUB,
-    BTC,
-    ETH
+    KZT,
+    BTC
 }

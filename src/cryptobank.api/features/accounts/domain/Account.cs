@@ -8,6 +8,6 @@ public class Account
     public int UserId { get; init; }
     public User User { get; init; } = User.Empty;
     public Currency Currency { get; init; } = Currency.USD;
-    public decimal Balance { get; init; }
+    public decimal Balance { get; set; }
     public DateTime DateOfOpening { get; init; } = DateTime.UnixEpoch;
 }
