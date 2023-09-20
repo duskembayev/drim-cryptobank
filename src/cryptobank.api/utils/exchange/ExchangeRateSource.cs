@@ -48,7 +48,17 @@ public class ExchangeRateSource : IExchangeRateSource
         if (latestData is not {Success: true})
             throw new LogicException("exchange_rate:load_error", "Failed to load exchange rates");
 
-        return latestData.Rates;
+        var ratesBuilder = ImmutableDictionary.CreateBuilder<Currency, decimal>();
+        
+        foreach (var (currency, rate) in latestData.Rates)
+        {
+            if (!Enum.TryParse<Currency>(currency, out var typedCurrency))
+                continue;
+
+            ratesBuilder[typedCurrency] = rate;
+        }
+
+        return ratesBuilder.ToImmutable();
     }
 
     private async ValueTask<ImmutableDictionary<Currency, decimal>?> GetCachedRatesAsync()
@@ -58,7 +68,14 @@ public class ExchangeRateSource : IExchangeRateSource
         if (ratesJson is {IsNullOrEmpty: true})
             return null;
 
-        return JsonSerializer.Deserialize<ImmutableDictionary<Currency, decimal>>(ratesJson.ToString());
+        try
+        {
+            return JsonSerializer.Deserialize<ImmutableDictionary<Currency, decimal>>(ratesJson.ToString());
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     private async ValueTask SetCachedRatesAsync(ImmutableDictionary<Currency, decimal> rates)
@@ -68,6 +85,6 @@ public class ExchangeRateSource : IExchangeRateSource
     }
 
     private record FixerLatestData(
-        bool Success, long Timestamp, Currency Base, DateOnly Date,
-        ImmutableDictionary<Currency, decimal> Rates);
+        bool Success, long Timestamp, string Base, DateOnly Date,
+        ImmutableDictionary<string, decimal> Rates);
 }

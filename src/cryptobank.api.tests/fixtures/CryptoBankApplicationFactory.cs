@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using cryptobank.api.features.users.services;
 using cryptobank.api.tests.extensions;
+using cryptobank.api.utils.exchange;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,11 @@ internal sealed class CryptoBankApplicationFactory : WebApplicationFactory<Progr
                 ["Features:Accounts:MaxAccountsPerUser"] = "2",
                 ["ConnectionStrings:postgres"] = context.Configuration.GetConnectionStringWithRndDatabase()
             });
+        });
+
+        builder.ConfigureServices(collection =>
+        {
+            collection.AddSingleton<IExchangeRateSource, ExchangeRateSourceMock>();
         });
 
         builder.UseEnvironment(Environments.Development);

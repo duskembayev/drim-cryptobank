@@ -2,7 +2,7 @@ using cryptobank.api.features.users.services;
 
 namespace cryptobank.api.features.accounts.endpoints.transfer;
 
-public class TransferRequest : IRequest<EmptyResponse>
+public class TransferRequest : IRequest<TransferModel>
 {
     [FromClaim(AccessTokenConstants.ClaimsTypes.Id)]
     public int UserId { get; set; }

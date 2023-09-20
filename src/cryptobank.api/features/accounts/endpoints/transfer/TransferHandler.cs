@@ -3,7 +3,7 @@ using cryptobank.api.features.accounts.services;
 
 namespace cryptobank.api.features.accounts.endpoints.transfer;
 
-public class TransferHandler : IRequestHandler<TransferRequest, EmptyResponse>
+public class TransferHandler : IRequestHandler<TransferRequest, TransferModel>
 {
     private readonly CryptoBankDbContext _dbContext;
     private readonly ICurrencyConverter _currencyConverter;
@@ -19,7 +19,7 @@ public class TransferHandler : IRequestHandler<TransferRequest, EmptyResponse>
         _timeProvider = timeProvider;
     }
 
-    public async Task<EmptyResponse> Handle(TransferRequest request, CancellationToken cancellationToken)
+    public async Task<TransferModel> Handle(TransferRequest request, CancellationToken cancellationToken)
     {
         var sourceAmount = request.Amount;
 
@@ -27,12 +27,12 @@ public class TransferHandler : IRequestHandler<TransferRequest, EmptyResponse>
             a => a.UserId == request.UserId && a.AccountId == request.SourceAccountId,
             cancellationToken);
 
+        if (source.Balance < sourceAmount)
+            throw new LogicException("accounts:transfer:insufficient_funds", "Insufficient funds");
+
         var target = await _dbContext.Accounts.SingleAsync(
             a => a.AccountId == request.TargetAccountId,
             cancellationToken);
-
-        if (source.Balance < sourceAmount)
-            throw new LogicException("accounts:transfer:insufficient_funds", "Insufficient funds");
 
         var (targetAmount, rate) = await _currencyConverter
             .ConvertAsync(source.Currency, target.Currency, sourceAmount);
@@ -42,7 +42,7 @@ public class TransferHandler : IRequestHandler<TransferRequest, EmptyResponse>
         source.Balance -= sourceAmount;
         target.Balance += targetAmount;
 
-        _dbContext.Add(new InternalTransfer
+        var transfer = new InternalTransfer
         {
             SourceUserId = source.UserId,
             SourceAccountId = source.AccountId,
@@ -55,12 +55,13 @@ public class TransferHandler : IRequestHandler<TransferRequest, EmptyResponse>
             ConversionRate = rate,
             Comment = request.Comment,
             DateOfCreate = _timeProvider.UtcNow
-        });
+        };
 
+        _dbContext.Add(transfer);
         _dbContext.UpdateRange(source, target);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        return new EmptyResponse();
+        return new TransferModel(transfer.Id);
     }
 }

@@ -19,7 +19,7 @@ public class TransferEndpoint : Endpoint<TransferRequest>
 
     public override async Task HandleAsync(TransferRequest req, CancellationToken ct)
     {
-        await _mediator.Send(req, ct);
-        await SendOkAsync(ct);
+        var res = await _mediator.Send(req, ct);
+        await SendOkAsync(res, ct);
     }
 }
