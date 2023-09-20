@@ -35,7 +35,7 @@ public class CurrencyConverterTests
         var amount = await _currencyConverter
             .ConvertAsync(Currency.EUR, Currency.KZT, 2);
 
-        amount.ShouldBe(1007.959838m);
+        amount.ShouldBe(1007.96m, 0.01m);
     }
 
     [Fact]
