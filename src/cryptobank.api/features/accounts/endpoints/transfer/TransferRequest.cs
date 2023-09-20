@@ -15,13 +15,15 @@ public class TransferRequest : IRequest<TransferModel>
     
     public class Validator : AbstractValidator<TransferRequest>
     {
-        public Validator(CryptoBankDbContext dbContext)
+        public Validator()
         {
             RuleFor(request => request.Amount)
                 .GreaterThan(0)
                 .WithErrorCode("accounts:transfer:invalid_amount");
-            RuleFor(request => request.SourceAccountId)
-                .MustAsync((accountId, token) => )
+
+            RuleFor(request => request.Comment)
+                .MaximumLength(500)
+                .WithErrorCode("accounts:transfer:comment_too_long");
         }
     }
 }

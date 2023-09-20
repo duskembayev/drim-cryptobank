@@ -23,16 +23,22 @@ public class TransferHandler : IRequestHandler<TransferRequest, TransferModel>
     {
         var sourceAmount = request.Amount;
 
-        var source = await _dbContext.Accounts.SingleAsync(
+        var source = await _dbContext.Accounts.SingleOrDefaultAsync(
             a => a.UserId == request.UserId && a.AccountId == request.SourceAccountId,
             cancellationToken);
 
-        if (source.Balance < sourceAmount)
-            throw new LogicException("accounts:transfer:insufficient_funds", "Insufficient funds");
-
-        var target = await _dbContext.Accounts.SingleAsync(
+        var target = await _dbContext.Accounts.SingleOrDefaultAsync(
             a => a.AccountId == request.TargetAccountId,
             cancellationToken);
+
+        if (source is null)
+            throw new LogicException("accounts:transfer:source_account_not_found", "Source account not found");
+
+        if (target is null)
+            throw new LogicException("accounts:transfer:target_account_not_found", "Target account not found");
+
+        if (source.Balance < sourceAmount)
+            throw new LogicException("accounts:transfer:insufficient_funds", "Insufficient funds");
 
         var (targetAmount, rate) = await _currencyConverter
             .ConvertAsync(source.Currency, target.Currency, sourceAmount);

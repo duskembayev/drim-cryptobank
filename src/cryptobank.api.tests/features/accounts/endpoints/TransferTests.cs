@@ -163,6 +163,40 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         result.ShouldBeProblem(HttpStatusCode.Conflict, "accounts:transfer:insufficient_funds");
     }
 
+    [Fact]
+    public async Task ShouldReturnErrorWhenTargetNotFound()
+    {
+        var client = _fixture.CreateClient(_user1);
+        var sourceAccount = _user1!.Accounts.Single(account => account.Currency == Currency.USD);
+
+        var result = await client.POSTAsync<TransferRequest, ProblemDetails>("/accounts/transfer",
+            new TransferRequest
+            {
+                SourceAccountId = sourceAccount.AccountId,
+                TargetAccountId = "some_invalid_account_id",
+                Amount = 500
+            });
+
+        result.ShouldBeProblem(HttpStatusCode.Conflict, "accounts:transfer:target_account_not_found");
+    }
+
+    [Fact]
+    public async Task ShouldReturnErrorWhenSourceNotFound()
+    {
+        var client = _fixture.CreateClient(_user1);
+        var targetAccount = _user2!.Accounts.Single(account => account.Currency == Currency.KZT);
+
+        var result = await client.POSTAsync<TransferRequest, ProblemDetails>("/accounts/transfer",
+            new TransferRequest
+            {
+                SourceAccountId = "some_invalid_account_id",
+                TargetAccountId = targetAccount.AccountId,
+                Amount = 500
+            });
+
+        result.ShouldBeProblem(HttpStatusCode.Conflict, "accounts:transfer:source_account_not_found");
+    }
+
     private static async Task<User> CreateUserAsync(
         string email,
         IReadOnlyList<(Currency currency, decimal balance)> amountOfAccounts,
@@ -172,7 +206,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         {
             Email = email,
             PasswordHash = await hashAlgorithm.HashAsync("P@s$w0rd"),
-            Roles = { Role.Detached.User },
+            Roles = {Role.Detached.User},
             DateOfBirth = new DateOnly(2000, 1, 1),
             DateOfRegistration = new DateTime(2019, 1, 1, 1, 1, 1, DateTimeKind.Utc)
         };
