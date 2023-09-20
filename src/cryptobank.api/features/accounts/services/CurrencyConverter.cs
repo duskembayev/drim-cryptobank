@@ -13,10 +13,11 @@ public class CurrencyConverter : ICurrencyConverter
         _exchangeRateSource = exchangeRateSource;
     }
 
-    public async Task<decimal> ConvertAsync(Currency source, Currency target, decimal amount)
+    public async Task<(decimal TargetAmount, decimal Rate)> ConvertAsync(Currency source, Currency target, decimal sourceAmount)
     {
         var rate = await GetRateAsync(source, target);
-        return amount * rate;
+        var targetAmount = sourceAmount * rate;
+        return (targetAmount, rate);
     }
 
     private async ValueTask<decimal> GetRateAsync(Currency source, Currency target)

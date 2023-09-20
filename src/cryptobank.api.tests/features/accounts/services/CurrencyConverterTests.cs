@@ -32,27 +32,30 @@ public class CurrencyConverterTests
     [Fact]
     public async Task ShouldConvert()
     {
-        var amount = await _currencyConverter
+        var (amount, rate) = await _currencyConverter
             .ConvertAsync(Currency.EUR, Currency.KZT, 2);
 
+        rate.ShouldBe(503.98m, 0.01m);
         amount.ShouldBe(1007.96m, 0.01m);
     }
 
     [Fact]
     public async Task ShouldConvertBack()
     {
-        var amount = await _currencyConverter
+        var (amount, rate) = await _currencyConverter
             .ConvertAsync(Currency.KZT, Currency.USD, 946m);
 
+        rate.ShouldBe(0.00212m, 0.0001m);
         amount.ShouldBe(2, 0.01m);
     }
 
     [Fact]
     public async Task ShouldConvertWhenSameCurrencies()
     {
-        var amount = await _currencyConverter
+        var (amount, rate) = await _currencyConverter
             .ConvertAsync(Currency.CHF, Currency.CHF, 157);
 
+        rate.ShouldBe(1, 0.01m);
         amount.ShouldBe(157);
     }
 

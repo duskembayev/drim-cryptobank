@@ -11,4 +11,5 @@ public class TransferRequest : IRequest<EmptyResponse>
     public string TargetAccountId { get; set; } = string.Empty;
 
     public decimal Amount { get; set; }
+    public string Comment { get; set; } = string.Empty;
 }

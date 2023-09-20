@@ -4,5 +4,5 @@ namespace cryptobank.api.features.accounts.services;
 
 public interface ICurrencyConverter
 {
-    Task<decimal> ConvertAsync(Currency source, Currency target, decimal amount);
+    Task<(decimal TargetAmount, decimal Rate)> ConvertAsync(Currency source, Currency target, decimal amount);
 }
