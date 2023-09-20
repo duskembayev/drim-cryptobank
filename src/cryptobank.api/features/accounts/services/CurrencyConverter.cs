@@ -27,7 +27,7 @@ public class CurrencyConverter : ICurrencyConverter
         var rates = await _exchangeRateSource.GetRatesAsync();
 
         if (!rates.TryGetValue(source, out var sourceRate) || !rates.TryGetValue(target, out var targetRate))
-            throw new LogicException("exchange_rate:unknown_currency", "Unknown currency");
+            throw new ApplicationException("Unknown currency");
 
         return targetRate / sourceRate;
     }
