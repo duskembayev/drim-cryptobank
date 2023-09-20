@@ -12,4 +12,16 @@ public class TransferRequest : IRequest<TransferModel>
 
     public decimal Amount { get; set; }
     public string Comment { get; set; } = string.Empty;
+    
+    public class Validator : AbstractValidator<TransferRequest>
+    {
+        public Validator(CryptoBankDbContext dbContext)
+        {
+            RuleFor(request => request.Amount)
+                .GreaterThan(0)
+                .WithErrorCode("accounts:transfer:invalid_amount");
+            RuleFor(request => request.SourceAccountId)
+                .MustAsync((accountId, token) => )
+        }
+    }
 }
