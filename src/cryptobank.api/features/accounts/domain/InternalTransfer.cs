@@ -2,6 +2,8 @@ namespace cryptobank.api.features.accounts.domain;
 
 public class InternalTransfer
 {
+    public const int MaxCommentLength = 500;
+
     public long Id { get; init; }
 
     public int SourceUserId { get; init; }

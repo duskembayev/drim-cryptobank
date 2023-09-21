@@ -1,3 +1,4 @@
+using cryptobank.api.features.accounts.domain;
 using cryptobank.api.features.users.services;
 
 namespace cryptobank.api.features.accounts.endpoints.transfer;
@@ -22,7 +23,7 @@ public class TransferRequest : IRequest<TransferModel>
                 .WithErrorCode("accounts:transfer:invalid_amount");
 
             RuleFor(request => request.Comment)
-                .MaximumLength(500)
+                .MaximumLength(InternalTransfer.MaxCommentLength)
                 .WithErrorCode("accounts:transfer:comment_too_long");
         }
     }

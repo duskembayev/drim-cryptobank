@@ -72,7 +72,7 @@ public class CryptoBankDbContext : DbContext
         builder
             .Property(t => t.Comment)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(InternalTransfer.MaxCommentLength);
         
         builder
             .Property(t => t.DateOfCreation)
