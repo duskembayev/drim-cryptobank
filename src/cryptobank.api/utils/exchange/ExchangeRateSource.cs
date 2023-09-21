@@ -67,7 +67,7 @@ public class ExchangeRateSource : IExchangeRateSource
 
         if (missedCurrencies.Length > 0)
             _logger.LogError(
-                "One or more currencies are not supported by rate provider: {currencies}",
+                "One or more currencies are not supported by rate provider: {Currencies}",
                 string.Join(", ", missedCurrencies));
 
         return ratesBuilder.ToImmutable();
