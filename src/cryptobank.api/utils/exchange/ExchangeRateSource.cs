@@ -12,15 +12,18 @@ public class ExchangeRateSource : IExchangeRateSource
     private readonly IRedisConnection _redisConnection;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IOptions<ExchangeRateOptions> _options;
+    private readonly ILogger<ExchangeRateSource> _logger;
 
     public ExchangeRateSource(
         IRedisConnection redisConnection,
         IHttpClientFactory httpClientFactory,
-        IOptions<ExchangeRateOptions> options)
+        IOptions<ExchangeRateOptions> options,
+        ILogger<ExchangeRateSource> logger)
     {
         _redisConnection = redisConnection;
         _httpClientFactory = httpClientFactory;
         _options = options;
+        _logger = logger;
     }
 
     public async Task<ImmutableDictionary<Currency, decimal>> GetRatesAsync()
@@ -45,11 +48,11 @@ public class ExchangeRateSource : IExchangeRateSource
 
         var latestData = await response.Content.ReadFromJsonAsync<FixerLatestData>();
 
-        if (latestData is not {Success: true})
+        if (latestData is not { Success: true })
             throw new LogicException("exchange_rate:load_error", "Failed to load exchange rates");
 
         var ratesBuilder = ImmutableDictionary.CreateBuilder<Currency, decimal>();
-        
+
         foreach (var (currency, rate) in latestData.Rates)
         {
             if (!Enum.TryParse<Currency>(currency, out var typedCurrency))
@@ -58,6 +61,15 @@ public class ExchangeRateSource : IExchangeRateSource
             ratesBuilder[typedCurrency] = rate;
         }
 
+        var missedCurrencies = Enum.GetValues<Currency>()
+            .Where(c => !ratesBuilder.ContainsKey(c))
+            .ToArray();
+
+        if (missedCurrencies.Length > 0)
+            _logger.LogError(
+                "One or more currencies are not supported by rate provider: {currencies}",
+                string.Join(", ", missedCurrencies));
+
         return ratesBuilder.ToImmutable();
     }
 
@@ -65,7 +77,7 @@ public class ExchangeRateSource : IExchangeRateSource
     {
         var ratesJson = await _redisConnection.Database.StringGetAsync(CurrencyRatesRedisKey);
 
-        if (ratesJson is {IsNullOrEmpty: true})
+        if (ratesJson is { IsNullOrEmpty: true })
             return null;
 
         try
