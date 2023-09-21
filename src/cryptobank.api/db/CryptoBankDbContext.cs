@@ -75,7 +75,7 @@ public class CryptoBankDbContext : DbContext
             .HasMaxLength(500);
         
         builder
-            .Property(t => t.DateOfCreate)
+            .Property(t => t.DateOfCreation)
             .IsRequired();
     }
 

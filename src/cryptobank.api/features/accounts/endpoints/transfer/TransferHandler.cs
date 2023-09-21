@@ -60,7 +60,7 @@ public class TransferHandler : IRequestHandler<TransferRequest, TransferModel>
             TargetAmount = targetAmount,
             ConversionRate = rate,
             Comment = request.Comment,
-            DateOfCreate = _timeProvider.UtcNow
+            DateOfCreation = _timeProvider.UtcNow
         };
 
         _dbContext.Add(transfer);

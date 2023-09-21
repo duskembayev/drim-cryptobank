@@ -98,7 +98,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         transfer.TargetAmount.ShouldBe(amount);
         transfer.Comment.ShouldBe(comment);
         transfer.ConversionRate.ShouldBe(1);
-        transfer.DateOfCreate.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(2));
+        transfer.DateOfCreation.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(2));
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         transfer.TargetCurrency.ShouldBe(targetAccount.Currency);
         transfer.TargetAmount.ShouldBe(94360.2m, 0.1m);
         transfer.ConversionRate.ShouldBe(471.8m, 0.1m);
-        transfer.DateOfCreate.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(2));
+        transfer.DateOfCreation.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(2));
     }
 
     [Fact]

@@ -16,5 +16,5 @@ public class InternalTransfer
 
     public decimal ConversionRate { get; init; }
     public string Comment { get; init; } = string.Empty;
-    public DateTime DateOfCreate { get; init; }
+    public DateTime DateOfCreation { get; init; }
 }
