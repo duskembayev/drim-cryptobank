@@ -2,7 +2,6 @@
 using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace cryptobank.api.db;
 
@@ -17,6 +16,7 @@ public class CryptoBankDbContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Account> Accounts { get; set; } = null!;
+    public DbSet<InternalTransfer> InternalTransfers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,7 +24,59 @@ public class CryptoBankDbContext : DbContext
             .Entity<News>(BuildNews)
             .Entity<User>(BuildUser)
             .Entity<Role>(BuildRole)
-            .Entity<Account>(BuildAccount);
+            .Entity<Account>(BuildAccount)
+            .Entity<InternalTransfer>(BuildInternalTransfer);
+    }
+
+    private void BuildInternalTransfer(EntityTypeBuilder<InternalTransfer> builder)
+    {
+        builder.ToTable("InternalTransfer");
+        builder.HasKey(t => t.Id);
+
+        builder
+            .Property(t => t.Id)
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+
+        builder.MoneyProperty(t => t.ConversionRate);
+
+        builder
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(t => t.SourceUserId)
+            .IsRequired();
+
+        builder
+            .HasOne<Account>()
+            .WithMany()
+            .HasForeignKey(t => t.SourceAccountId)
+            .IsRequired();
+
+        builder.CurrencyProperty(t => t.SourceCurrency);
+        builder.MoneyProperty(t => t.SourceAmount);
+
+        builder
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(t => t.TargetUserId);
+
+        builder
+            .HasOne<Account>()
+            .WithMany()
+            .HasForeignKey(t => t.TargetAccountId)
+            .IsRequired();
+
+        builder.CurrencyProperty(t => t.TargetCurrency);
+        builder.MoneyProperty(t => t.TargetAmount);
+
+        builder
+            .Property(t => t.Comment)
+            .IsRequired()
+            .HasMaxLength(InternalTransfer.MaxCommentLength);
+        
+        builder
+            .Property(t => t.DateOfCreation)
+            .IsRequired();
     }
 
     private static void BuildAccount(EntityTypeBuilder<Account> builder)
@@ -43,16 +95,8 @@ public class CryptoBankDbContext : DbContext
             .HasForeignKey(a => a.UserId)
             .IsRequired();
 
-        builder
-            .Property(a => a.Currency)
-            .HasConversion<EnumToStringConverter<Currency>>()
-            .IsRequired()
-            .HasMaxLength(3);
-
-        builder
-            .Property(a => a.Balance)
-            .IsRequired()
-            .HasPrecision(18, 2);
+        builder.CurrencyProperty(a => a.Currency);
+        builder.MoneyProperty(a => a.Balance);
 
         builder
             .Property(a => a.DateOfOpening)

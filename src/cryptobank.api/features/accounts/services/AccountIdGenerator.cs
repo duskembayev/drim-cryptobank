@@ -19,7 +19,7 @@ internal class AccountIdGenerator : IAccountIdGenerator
 
         try
         {
-            _rndBytesGenerator.Fill(buffer.AsSpan()[..AccountIdLength]);
+            _rndBytesGenerator.Fill(buffer.AsSpan(..AccountIdLength));
             return BitConverter
                 .ToString(buffer, 0, AccountIdLength)
                 .Replace("-", "");

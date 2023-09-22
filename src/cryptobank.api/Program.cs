@@ -4,6 +4,7 @@ using cryptobank.api.features.accounts;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
 using cryptobank.api.redis;
+using cryptobank.api.utils.exchange;
 using cryptobank.api.utils.pipeline;
 using FastEndpoints.Swagger;
 
@@ -13,7 +14,8 @@ var appBuilder = WebApplication.CreateBuilder(args);
 appBuilder
     .AddNews()
     .AddUsers()
-    .AddAccounts();
+    .AddAccounts()
+    .AddExchangeRates();
 
 appBuilder.Services
     .AddRedis()
