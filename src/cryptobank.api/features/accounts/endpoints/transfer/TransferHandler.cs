@@ -43,8 +43,6 @@ public class TransferHandler : IRequestHandler<TransferRequest, TransferModel>
         var (targetAmount, rate) = await _currencyConverter
             .ConvertAsync(source.Currency, target.Currency, sourceAmount);
 
-        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
         source.Balance -= sourceAmount;
         target.Balance += targetAmount;
 
@@ -66,7 +64,6 @@ public class TransferHandler : IRequestHandler<TransferRequest, TransferModel>
         _dbContext.Add(transfer);
         _dbContext.UpdateRange(source, target);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         return new TransferModel(transfer.Id);
     }
