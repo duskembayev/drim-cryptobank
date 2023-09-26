@@ -1,4 +1,5 @@
 ﻿using cryptobank.api.features.accounts.domain;
+using cryptobank.api.features.deposits.domain;
 using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -17,6 +18,8 @@ public class CryptoBankDbContext : DbContext
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Account> Accounts { get; set; } = null!;
     public DbSet<InternalTransfer> InternalTransfers { get; set; } = null!;
+    public DbSet<Xpub> Xpubs { get; set; } = null!;
+    public DbSet<DepositAddress> DepositAddresses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,10 +28,61 @@ public class CryptoBankDbContext : DbContext
             .Entity<User>(BuildUser)
             .Entity<Role>(BuildRole)
             .Entity<Account>(BuildAccount)
-            .Entity<InternalTransfer>(BuildInternalTransfer);
+            .Entity<InternalTransfer>(BuildInternalTransfer)
+            .Entity<Xpub>(BuildXpub)
+            .Entity<DepositAddress>(BuildDepositAddress);
     }
 
-    private void BuildInternalTransfer(EntityTypeBuilder<InternalTransfer> builder)
+    private static void BuildDepositAddress(EntityTypeBuilder<DepositAddress> builder)
+    {
+        builder.ToTable("DepositAddress");
+        builder.HasKey(d => new { d.UserId, d.XpubId });
+
+        builder
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(d => d.UserId)
+            .IsRequired();
+
+        builder
+            .HasOne<Xpub>()
+            .WithMany()
+            .HasForeignKey(d => d.XpubId);
+
+        builder
+            .Property(d => d.DerivationIndex)
+            .IsRequired();
+
+        builder
+            .Property(d => d.CryptoAddress)
+            .IsRequired()
+            .HasMaxLength(120);
+    }
+
+    private static void BuildXpub(EntityTypeBuilder<Xpub> builder)
+    {
+        builder.ToTable("Xpub");
+        builder.HasKey(x => x.Id);
+
+        builder
+            .Property(x => x.Id)
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+
+        builder.CurrencyProperty(x => x.Currency);
+
+        builder
+            .Property(x => x.Value)
+            .IsRequired()
+            .HasMaxLength(120);
+
+        builder
+            .Property(x => x.NextDerivationIndex)
+            .IsRequired()
+            .HasDefaultValue(0);
+    }
+
+    private static void BuildInternalTransfer(EntityTypeBuilder<InternalTransfer> builder)
     {
         builder.ToTable("InternalTransfer");
         builder.HasKey(t => t.Id);
@@ -73,7 +127,7 @@ public class CryptoBankDbContext : DbContext
             .Property(t => t.Comment)
             .IsRequired()
             .HasMaxLength(InternalTransfer.MaxCommentLength);
-        
+
         builder
             .Property(t => t.DateOfCreation)
             .IsRequired();
