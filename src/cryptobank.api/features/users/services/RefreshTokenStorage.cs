@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using cryptobank.api.features.users.config;
 using cryptobank.api.redis;
@@ -41,7 +40,7 @@ internal sealed class RefreshTokenStorage : IRefreshTokenStorage
     public (int UserId, string Token)? Renew(string token)
     {
         var lockKey = LockKey(token);
-        var lockValue = RandomValue(LockValueSize);
+        var lockValue = _rndBytesGenerator.GetAsBase64(LockValueSize);
 
         if (!_redisConnection.Database.LockTake(lockKey, lockValue, TimeSpan.FromSeconds(10)))
             throw new InvalidOperationException("Failed to acquire lock");
@@ -171,22 +170,7 @@ internal sealed class RefreshTokenStorage : IRefreshTokenStorage
 
     private string GenerateToken(int userId)
     {
-        var token = RandomValue(_options.Value.TokenSize);
+        var token = _rndBytesGenerator.GetAsBase64(_options.Value.TokenSize);
         return $"u{userId:D5}:{token}";
-    }
-
-    private string RandomValue(int size)
-    {
-        var buffer = ArrayPool<byte>.Shared.Rent(size);
-
-        try
-        {
-            _rndBytesGenerator.Fill(buffer.AsSpan()[..size]);
-            return Convert.ToBase64String(buffer, 0, size);
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
     }
 }

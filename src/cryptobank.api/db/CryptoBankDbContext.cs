@@ -36,12 +36,12 @@ public class CryptoBankDbContext : DbContext
     private static void BuildDepositAddress(EntityTypeBuilder<DepositAddress> builder)
     {
         builder.ToTable("DepositAddress");
-        builder.HasKey(d => new { d.UserId, d.XpubId });
+        builder.HasKey(d => d.AccountId);
 
         builder
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey(d => d.UserId)
+            .HasOne<Account>()
+            .WithOne()
+            .HasForeignKey<DepositAddress>(d => d.AccountId)
             .IsRequired();
 
         builder
