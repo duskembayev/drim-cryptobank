@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 using cryptobank.api.features.accounts;
+using cryptobank.api.features.deposits;
 using cryptobank.api.features.news;
 using cryptobank.api.features.users;
 using cryptobank.api.redis;
@@ -15,7 +16,7 @@ appBuilder
     .AddNews()
     .AddUsers()
     .AddAccounts()
-    .AddExchangeRates();
+    .AddDeposits();
 
 appBuilder.Services
     .AddRedis()
@@ -31,6 +32,7 @@ appBuilder.Services
             .RegisterServicesFromAssembly(thisAssembly)
             .AddOpenBehavior(typeof(RequestValidationBehavior<,>));
     })
+    .AddExchangeRates()
     .AddEnhancedModules(appBuilder.Configuration.GetSection("Features"))
     .AddDbContext(appBuilder.Configuration)
     .AddValidatorsFromAssembly(thisAssembly);

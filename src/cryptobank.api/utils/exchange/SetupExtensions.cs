@@ -2,13 +2,13 @@
 
 public static class SetupExtensions
 {
-    public static WebApplicationBuilder AddExchangeRates(this WebApplicationBuilder @this)
+    public static IServiceCollection AddExchangeRates(this IServiceCollection @this)
     {
-        @this.Services
+        @this
             .AddOptions<ExchangeRateOptions>()
             .BindConfiguration("ExchangeRate");
 
-        @this.Services
+        @this
             .AddHttpClient("fixer", (s, c) =>
             {
                 var options = s.GetRequiredService<IOptions<ExchangeRateOptions>>();
