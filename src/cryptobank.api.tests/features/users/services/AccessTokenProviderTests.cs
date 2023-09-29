@@ -9,7 +9,7 @@ namespace cryptobank.api.tests.features.users.services;
 public class AccessTokenProviderTests
 {
     private const string ValidToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2IiwiZW1haWwiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQW5hbHlzdCIsIlVzZXIiXSwiYXVkIjoiTXlBd2Vzb21lQXBwIiwiZXhwIjoxNjgzNDc1NTAwLCJpc3MiOiJNeUF3ZXNvbWVBdXRoUHJvdmlkZXIiLCJpYXQiOjE2ODM0NzUyMDAsIm5iZiI6MTY4MzQ3NTIwMH0.icFrivYpz-db8o3zA1jqXYRjtMytpmpoejOnVxf9BW8";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2IiwiZW1haWwiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQW5hbHlzdCIsIlVzZXIiXSwiYXVkIjoiTXlBd2Vzb21lQXBwIiwiaXNzIjoiTXlBd2Vzb21lQXV0aFByb3ZpZGVyIiwiZXhwIjoxNjgzNDc1NTAwLCJpYXQiOjE2ODM0NzUyMDAsIm5iZiI6MTY4MzQ3NTIwMH0.9-lNVMN4smtrmRTbcpM73VSPxPjl1--sWMJs-AMi5Is";
 
     private readonly AccessTokenProvider _accessTokenProvider;
 
