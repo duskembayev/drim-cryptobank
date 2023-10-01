@@ -15,7 +15,7 @@ while (true)
 {
     // spec https://github.com/bitcoin/bitcoin/blob/master/doc/zmq.md
     var parts = subscriber.ReceiveMultipartBytes();
-    var topic = Encoding.UTF8.GetString(parts[0]);
+    var topic = Encoding.ASCII.GetString(parts[0]);
     var sequence = ToUInt32LittleEndian(parts[2]);
     var body = topic switch
     {
