@@ -1,5 +1,3 @@
-using ValidationException = cryptobank.api.errors.exceptions.ValidationException;
-
 namespace cryptobank.api.errors;
 
 [Singleton]
