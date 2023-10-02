@@ -39,6 +39,10 @@ public class CryptoBankDbContext : DbContext
         builder.HasKey(d => d.AccountId);
 
         builder
+            .HasIndex(d => d.CryptoAddress)
+            .IsUnique();
+
+        builder
             .HasOne<Account>()
             .WithOne()
             .HasForeignKey<DepositAddress>(d => d.AccountId)
