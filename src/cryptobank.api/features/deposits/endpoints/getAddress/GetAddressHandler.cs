@@ -36,10 +36,12 @@ public class GetAddressHandler : IRequestHandler<GetAddressRequest, DepositAddre
                 cancellationToken);
 
         if (account is null)
-            throw new LogicException("deposits:get_address:account_not_found", "Account not found");
+            throw new ValidationException(nameof(request.AccountId), "deposits:get_address:account_not_found",
+                "Account not found");
 
         if (account is not {Currency: Currency.BTC})
-            throw new LogicException("deposits:get_address:account_not_btc", "Account is not BTC");
+            throw new ValidationException(nameof(request.AccountId), "deposits:get_address:account_not_btc",
+                "Account is not BTC");
 
         var (xpubId, derivationIndex, address) = await _cryptoAddressGenerator
             .GenerateAsync(account.Currency, cancellationToken);

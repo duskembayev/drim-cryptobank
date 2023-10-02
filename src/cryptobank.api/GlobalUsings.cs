@@ -11,4 +11,5 @@ global using MediatR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using SecurityException = cryptobank.api.errors.exceptions.SecurityException;
+global using ValidationException = cryptobank.api.errors.exceptions.ValidationException;
 global using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
