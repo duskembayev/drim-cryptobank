@@ -53,13 +53,38 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     }
 
     [Fact]
+    public async Task ShouldReturnAlreadyExistingAddress()
+    {
+        const string expectedAddress = "some-generated-before-address";
+        using var scope = _fixture.AppFactory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
+        var account = await CreateAccountAsync(dbContext, "my-account", Currency.EUR);
+        var xpub = await SetupXpubAsync(dbContext, 12);
+
+        dbContext.DepositAddresses.Add(new DepositAddress
+        {
+            AccountId = account.AccountId,
+            XpubId = xpub.Id,
+            DerivationIndex = 10,
+            CryptoAddress = expectedAddress
+        });
+        await dbContext.SaveChangesAsync();
+
+        var result = await _client.GETAsync<GetAddressRequest, DepositAddressModel>(
+            "/deposits/address",
+            new GetAddressRequest { AccountId = account.AccountId });
+
+        result.Result?.Address.ShouldBe(expectedAddress);
+    }
+
+    [Fact]
     public async Task ShouldReturnErrorWhenAccountNotFound()
     {
         var result = await _client.GETAsync<GetAddressRequest, ProblemDetails>(
             "/deposits/address",
             new GetAddressRequest { AccountId = "some-unknown-account" });
 
-        result.ShouldBeProblem(HttpStatusCode.Conflict, "deposits:get_address:account_not_found");
+        result.ShouldBeValidationProblem(nameof(GetAddressRequest.AccountId), "deposits:get_address:account_not_found");
     }
 
     [Fact]
@@ -73,7 +98,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
             "/deposits/address",
             new GetAddressRequest { AccountId = account.AccountId });
 
-        result.ShouldBeProblem(HttpStatusCode.Conflict, "deposits:get_address:account_not_btc");
+        result.ShouldBeValidationProblem(nameof(GetAddressRequest.AccountId), "deposits:get_address:account_not_btc");
     }
 
     private async ValueTask<Account> CreateAccountAsync(

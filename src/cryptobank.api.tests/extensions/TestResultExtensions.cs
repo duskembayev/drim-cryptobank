@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using cryptobank.api.errors.exceptions;
 using JetBrains.Annotations;
 
 namespace cryptobank.api.tests.extensions;
@@ -22,6 +23,22 @@ public static class TestResultExtensions
         var actualCode = element?.GetString();
 
         actualCode.ShouldBe(code);
+    }
+
+    [ContractAnnotation("res:null => halt")]
+    public static void ShouldBeValidationProblem(this TestResult<ProblemDetails> res, string property, string code)
+    {
+        ShouldBeWithStatus(res, HttpStatusCode.BadRequest);
+
+        res.Result.ShouldNotBeNull();
+
+        var element = (JsonElement?)res.Result.Extensions["errors"];
+        
+        element.ShouldNotBeNull();
+        element.Value
+            .Deserialize<ValidationException.ValidationError[]>()
+            ?.FirstOrDefault(e => e.Property.Equals(property, StringComparison.OrdinalIgnoreCase))
+            ?.Code.ShouldBe(code);
     }
 
     [ContractAnnotation("res:null => halt")]
