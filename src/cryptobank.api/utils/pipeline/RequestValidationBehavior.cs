@@ -1,6 +1,4 @@
-﻿using ValidationException = cryptobank.api.errors.exceptions.ValidationException;
-
-namespace cryptobank.api.utils.pipeline;
+﻿namespace cryptobank.api.utils.pipeline;
 
 public sealed class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

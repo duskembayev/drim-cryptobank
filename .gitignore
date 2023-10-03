@@ -4,3 +4,4 @@ obj/
 bin/
 test-results/
 *.user
+bitcoin/testnet3

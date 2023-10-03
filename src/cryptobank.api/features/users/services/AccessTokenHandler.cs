@@ -22,24 +22,24 @@ public class AccessTokenHandler : AuthenticationHandler<AccessTokenOptions>
         _jsonWebTokenHandler = jsonWebTokenHandler;
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (Request.Headers.Authorization.Count != 1)
-            return Task.FromResult(AuthenticateResult.Fail("Invalid \"Authorization\" headers"));
+            return AuthenticateResult.Fail("Invalid \"Authorization\" headers");
 
         var headerParts = Request.Headers.Authorization[0]?.Split(' ');
 
         if (headerParts is not [AccessTokenConstants.Bearer, var token])
-            return Task.FromResult(AuthenticateResult.Fail("Invalid \"Authorization\" headers"));
+            return AuthenticateResult.Fail("Invalid \"Authorization\" headers");
 
         var validationParameters = GetTokenValidationParameters();
-        var validationResult = _jsonWebTokenHandler.ValidateToken(token, validationParameters);
+        var validationResult = await _jsonWebTokenHandler.ValidateTokenAsync(token, validationParameters);
 
         if (!validationResult.IsValid)
-            return Task.FromResult(AuthenticateResult.Fail("Invalid access token"));
+            return AuthenticateResult.Fail("Invalid access token");
 
         var claimsPrincipal = new ClaimsPrincipal(validationResult.ClaimsIdentity);
-        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
+        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
     }
 
     private TokenValidationParameters GetTokenValidationParameters()

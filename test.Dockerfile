@@ -4,6 +4,7 @@ ARG CONFIGURATION=Release
 
 COPY ./src/cryptobank.api/*.csproj ./src/cryptobank.api/
 COPY ./src/cryptobank.api.tests/*.csproj ./src/cryptobank.api.tests/
+COPY ./tools/bitcoin.xpub/*.csproj ./tools/bitcoin.xpub/
 COPY cryptobank.sln .
 COPY Directory.Build.props .
 COPY nuget.config .
@@ -11,3 +12,4 @@ COPY nuget.config .
 RUN dotnet restore
 
 COPY ./src/ ./src/
+COPY ./tools/ ./tools/
