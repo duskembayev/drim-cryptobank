@@ -3,7 +3,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class GetProfileTests : IClassFixture<ApplicationFixture>
+[Collection(UsersCollection.Name)]
+public class GetProfileTests
 {
     private readonly ApplicationFixture _fixture;
     private readonly HttpClient _client;
@@ -11,7 +12,7 @@ public class GetProfileTests : IClassFixture<ApplicationFixture>
     public GetProfileTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient(_fixture.User);
+        _client = _fixture.HttpClient.CreateClient(_fixture.Setup.User);
     }
 
     [Fact]
@@ -21,9 +22,9 @@ public class GetProfileTests : IClassFixture<ApplicationFixture>
 
         res.ShouldBeOk();
         res.Result.ShouldNotBeNull();
-        res.Result.Email.ShouldBe(_fixture.User.Email);
-        res.Result.Roles.ShouldBe(_fixture.User.Roles.Select(role => role.Name));
-        res.Result.DateOfBirth.ShouldBe(_fixture.User.DateOfBirth);
-        res.Result.DateOfRegistration.ShouldBe(_fixture.User.DateOfRegistration);
+        res.Result.Email.ShouldBe(_fixture.Setup.User.Email);
+        res.Result.Roles.ShouldBe(_fixture.Setup.User.Roles.Select(role => role.Name));
+        res.Result.DateOfBirth.ShouldBe(_fixture.Setup.User.DateOfBirth);
+        res.Result.DateOfRegistration.ShouldBe(_fixture.Setup.User.DateOfRegistration);
     }
 }

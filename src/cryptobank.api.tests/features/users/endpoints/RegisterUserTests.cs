@@ -5,7 +5,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class RegisterUserTests : IClassFixture<ApplicationFixture>
+[Collection(UsersCollection.Name)]
+public class RegisterUserTests
 {
     private readonly ApplicationFixture _fixture;
     private readonly HttpClient _client;
@@ -13,7 +14,7 @@ public class RegisterUserTests : IClassFixture<ApplicationFixture>
     public RegisterUserTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient();
+        _client = _fixture.HttpClient.CreateClient();
     }
 
     [Fact]
@@ -32,7 +33,7 @@ public class RegisterUserTests : IClassFixture<ApplicationFixture>
 
         res.ShouldBeOk();
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
+        using var scope = _fixture.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
 
         var actualUser = await dbContext.Users

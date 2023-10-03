@@ -2,6 +2,7 @@ using cryptobank.api.features.accounts.endpoints.reportOpenedDaily;
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
+[Collection(AccountsCollection.Name)]
 public class ReportOpenedDailyRequestValidatorTests
 {
     private readonly ReportOpenedDailyRequest.Validator _validator = new();

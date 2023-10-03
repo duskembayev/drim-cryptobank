@@ -1,19 +1,20 @@
-﻿namespace cryptobank.api.db;
+﻿using static cryptobank.api.db.DbConstants;
+
+namespace cryptobank.api.db;
 
 public static class SetupExtensions
 {
-    private const string ConnectionStringName = "postgres";
-
     public static async Task RestoreDatabaseAsync(this WebApplication @this)
     {
-        var warmupTimeout = @this.Configuration.GetValue<int?>("WARMUP_TIMEOUT") ?? 500;
+        using var scope = @this.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
+        var options = scope.ServiceProvider.GetRequiredService<IOptions<DbOptions>>();
+
+        if (!options.Value.RestoreEnabled)
+            return;
         
-        if (warmupTimeout > 0)
-            await Task.Delay(warmupTimeout);
-
-        using var serviceScope = @this.Services.CreateScope();
-
-        var dbContext = serviceScope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
+        if (options.Value.RestoreTimeout > TimeSpan.Zero)
+            await Task.Delay(options.Value.RestoreTimeout);
 
         if (await dbContext.Database.EnsureCreatedAsync())
         {
@@ -30,10 +31,15 @@ public static class SetupExtensions
 
     public static IServiceCollection AddDbContext(this IServiceCollection @this, IConfiguration configuration)
     {
+        @this
+            .AddOptions<DbOptions>()
+            .BindConfiguration("Database");
+
         @this.AddDbContext<CryptoBankDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString(ConnectionStringName));
         });
+
         return @this;
     }
 }

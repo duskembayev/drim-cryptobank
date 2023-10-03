@@ -4,6 +4,7 @@ using cryptobank.api.utils.environment;
 
 namespace cryptobank.api.tests.features.users.services;
 
+[Collection(UsersCollection.Name)]
 public class PasswordHashAlgorithmTests
 {
     private const string ValidPassword = "MyAwes0m3P@$sw0rd";

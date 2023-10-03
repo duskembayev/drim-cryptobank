@@ -1,70 +1,58 @@
-﻿using cryptobank.api.features.users.domain;
+﻿using cryptobank.api.tests.harnesses;
+using cryptobank.api.tests.harnesses.core;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace cryptobank.api.tests.fixtures;
 
 public class ApplicationFixture : IAsyncLifetime
 {
-    public const string UserEmail = "user@example.com";
-    public const string UserPassword = "userP@s$w0rd";
-    public const string AdministratorEmail = "admin@example.com";
-    public const string AdministratorPassword = "adminP@s$w0rd";
-    public const string AnalystEmail = "analyst@example.com";
-    public const string AnalystPassword = "analystP@s$w0rd";
-    private User? _administrator;
-    private User? _analyst;
-    private User? _user;
+    private readonly WebApplicationFactory<Program> _factory;
 
-    public User User
+    public ApplicationFixture()
     {
-        get => _user ?? throw new InvalidOperationException();
-        private set => _user = value;
+        Redis = new RedisHarness();
+        Postgres = new PostgresHarness();
+        Database = new DatabaseHarness(Postgres);
+        HttpClient = new HttpClientHarness();
+        Setup = new SetupHarness(Database);
+
+        _factory = new WebApplicationFactory<Program>()
+            .AddHarness(Redis)
+            .AddHarness(Postgres)
+            .AddHarness(Database)
+            .AddHarness(HttpClient)
+            .AddHarness(Setup);
     }
 
-    public User Administrator
-    {
-        get => _administrator ?? throw new InvalidOperationException();
-        private set => _administrator = value;
-    }
+    internal DatabaseHarness Database { get; }
 
-    public User Analyst
-    {
-        get => _analyst ?? throw new InvalidOperationException();
-        private set => _analyst = value;
-    }
+    internal PostgresHarness Postgres { get; }
 
-    internal CryptoBankApplicationFactory AppFactory { get; } = new();
+    internal RedisHarness Redis { get; }
+
+    internal HttpClientHarness HttpClient { get; }
+
+    internal SetupHarness Setup { get; }
+
+    internal IServiceProvider Services => _factory.Services;
 
     async Task IAsyncLifetime.InitializeAsync()
     {
-        await AppFactory.InitializeAsync();
+        await ((IHarness<Program>) Redis).StartAsync(_factory, default);
+        await ((IHarness<Program>) Postgres).StartAsync(_factory, default);
+        await ((IHarness<Program>) Database).StartAsync(_factory, default);
+        await ((IHarness<Program>) HttpClient).StartAsync(_factory, default);
+        await ((IHarness<Program>) Setup).StartAsync(_factory, default);
 
-        User = await AppFactory.CreateUserAsync(
-            UserEmail, UserPassword, Role.User);
-        Administrator = await AppFactory.CreateUserAsync(
-            AdministratorEmail, AdministratorPassword, Role.Administrator);
-        Analyst = await AppFactory.CreateUserAsync(
-            AnalystEmail, AnalystPassword, Role.Analyst);
+        _ = _factory.Server;
     }
 
     async Task IAsyncLifetime.DisposeAsync()
     {
-        await AppFactory.DisposeAsync();
-    }
-
-    public HttpClient CreateClient(User? user = null)
-    {
-        var accessToken = AppFactory.AccessToken;
-
-        try
-        {
-            if (user != null)
-                this.Authorize(user);
-
-            return AppFactory.CreateClient();
-        }
-        finally
-        {
-            AppFactory.AccessToken = accessToken;
-        }
+        await ((IHarness<Program>) Setup).StopAsync(default);
+        await ((IHarness<Program>) HttpClient).StopAsync(default);
+        await ((IHarness<Program>) Database).StopAsync(default);
+        await ((IHarness<Program>) Postgres).StopAsync(default);
+        await ((IHarness<Program>) Redis).StopAsync(default);
     }
 }

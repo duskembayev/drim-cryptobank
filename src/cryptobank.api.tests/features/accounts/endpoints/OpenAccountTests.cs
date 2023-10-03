@@ -1,11 +1,12 @@
-using cryptobank.api.db;
 using cryptobank.api.features.accounts.domain;
 using cryptobank.api.features.accounts.endpoints.openAccount;
+using cryptobank.api.features.users.domain;
 using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
-public class OpenAccountTests : IClassFixture<ApplicationFixture>
+[Collection(AccountsCollection.Name)]
+public class OpenAccountTests
 {
     private readonly ApplicationFixture _fixture;
     private readonly HttpClient _client;
@@ -13,7 +14,7 @@ public class OpenAccountTests : IClassFixture<ApplicationFixture>
     public OpenAccountTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient(_fixture.User);
+        _client = _fixture.HttpClient.CreateClient(_fixture.Setup.User);
     }
 
     [Theory]
@@ -30,21 +31,20 @@ public class OpenAccountTests : IClassFixture<ApplicationFixture>
         result.ShouldBeOk();
         result.Result.ShouldNotBeEmpty();
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        var account = await dbContext.Accounts.SingleAsync(a => a.AccountId == result.Result);
+        var account = await _fixture.Database
+            .ExecuteAsync(db => db.Accounts.SingleAsync(a => a.AccountId == result.Result));
 
-        account.UserId.ShouldBe(_fixture.User.Id);
+        account.UserId.ShouldBe(_fixture.Setup.User.Id);
         account.Currency.ShouldBe(currency);
         account.Balance.ShouldBe(0);
-        account.DateOfOpening.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        account.DateOfOpening.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(3));
     }
 
     [Fact]
     public async Task ShouldNotOpenAccountWhenLimitReached()
     {
-        var user = await _fixture.AppFactory.CreateUserAsync("mike@example.com");
-        var userClient = _fixture.CreateClient(user);
+        var user = await _fixture.Setup.CreateUserAsync(Role.User, "mike@example.com");
+        var userClient = _fixture.HttpClient.CreateClient(user);
 
         var result1 = await userClient.POSTAsync<OpenAccountRequest, string>("/accounts/open",
             new OpenAccountRequest

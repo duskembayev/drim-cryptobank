@@ -2,6 +2,7 @@ using cryptobank.api.features.users.endpoints.loginUser;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
+[Collection(UsersCollection.Name)]
 public class LoginUserRequestValidatorTests
 {
     private readonly LoginUserRequest.Validator _validator = new();

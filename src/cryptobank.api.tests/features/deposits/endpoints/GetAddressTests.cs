@@ -6,7 +6,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.deposits.endpoints;
 
-public class GetAddressTests : IClassFixture<ApplicationFixture>
+[Collection(DepositsCollection.Name)]
+public class GetAddressTests
 {
     private const string Xpub =
         "tpubD6NzVbkrYhZ4YAoLbobYyBFnWrLokvou8GC8jimnijV6ymg9uMxNM5ioov7eZkSDjqDaN81UDaz9y9G2CNfohhGMaesbCY22ziXZzZzEKuK";
@@ -17,7 +18,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     public GetAddressTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient(_fixture.User);
+        _client = _fixture.HttpClient.CreateClient(_fixture.Setup.User);
     }
 
     [Fact]
@@ -26,7 +27,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
         const uint derivationIndex = 10u;
         const string expectedAddress = "tb1qwt9vjywsjnlv88xw0qpjxys45cf4r50h4m2nky";
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
+        using var scope = _fixture.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
         var account = await CreateAccountAsync(dbContext, "my-btc-account", Currency.BTC);
         var xpub = await SetupXpubAsync(dbContext, derivationIndex);
@@ -56,7 +57,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     public async Task ShouldReturnAlreadyExistingAddress()
     {
         const string expectedAddress = "some-generated-before-address";
-        using var scope = _fixture.AppFactory.Services.CreateScope();
+        using var scope = _fixture.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
         var account = await CreateAccountAsync(dbContext, "my-account", Currency.EUR);
         var xpub = await SetupXpubAsync(dbContext, 12);
@@ -90,7 +91,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     [Fact]
     public async Task ShouldReturnErrorWhenAccountNotBtc()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
+        using var scope = _fixture.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
         var account = await CreateAccountAsync(dbContext, "my-eur-account", Currency.EUR);
 
@@ -107,13 +108,13 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
         var account = new Account
         {
             AccountId = accountId,
-            User = _fixture.User,
+            User = _fixture.Setup.User,
             Currency = currency,
             Balance = 0,
             DateOfOpening = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
 
-        dbContext.Attach(_fixture.User);
+        dbContext.Attach(_fixture.Setup.User);
         dbContext.Accounts.Add(account);
         await dbContext.SaveChangesAsync();
         return account;

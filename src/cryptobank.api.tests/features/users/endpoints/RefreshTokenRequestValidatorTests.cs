@@ -2,6 +2,7 @@ using cryptobank.api.features.users.endpoints.refreshToken;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
+[Collection(UsersCollection.Name)]
 public class RefreshTokenRequestValidatorTests
 {
     private readonly RefreshTokenRequest.Validator _validator = new();

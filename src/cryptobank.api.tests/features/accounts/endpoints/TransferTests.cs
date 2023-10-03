@@ -7,7 +7,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
-public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
+[Collection(AccountsCollection.Name)]
+public class TransferTests : IAsyncLifetime
 {
     private readonly ApplicationFixture _fixture;
     private User? _user1;
@@ -20,8 +21,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var hashAlgorithm = scope.ServiceProvider.GetRequiredService<IPasswordHashAlgorithm>();
+        var hashAlgorithm = _fixture.Services.GetRequiredService<IPasswordHashAlgorithm>();
 
         _user1 = await CreateUserAsync("user1@example.com",
             new (Currency currency, decimal balance)[]
@@ -37,19 +37,21 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
                 (Currency.USD, 800)
             }, hashAlgorithm);
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        dbContext.Attach(Role.Detached.User);
-        dbContext.Users.AddRange(_user1, _user2);
-        await dbContext.SaveChangesAsync();
+        await _fixture.Database.ExecuteAsync(async db =>
+        {
+            db.Attach(Role.Detached.User);
+            db.Users.AddRange(_user1, _user2);
+            await db.SaveChangesAsync();
+        });
     }
 
     public async Task DisposeAsync()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-
-        dbContext.RemoveRange(_user1!, _user2!);
-        await dbContext.SaveChangesAsync();
+        await _fixture.Database.ExecuteAsync(async db =>
+        {
+            db.RemoveRange(_user1!, _user2!);
+            await db.SaveChangesAsync();
+        });
     }
 
     [Fact]
@@ -58,7 +60,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         const int amount = 100;
         const string comment = "Have a great day!";
 
-        var client = _fixture.CreateClient(_user1);
+        var client = _fixture.HttpClient.CreateClient(_user1!);
         var sourceAccount = _user1!.Accounts.Single(account => account.Currency == Currency.USD);
         var targetAccount = _user2!.Accounts.Single(account => account.Currency == Currency.USD);
 
@@ -75,18 +77,16 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         result.Result.ShouldNotBeNull();
         result.Result.Id.ShouldBeGreaterThan(0);
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
+        (await _fixture.Database.ExecuteAsync(
+                db => db.Accounts.SingleAsync(a => a.AccountId == sourceAccount.AccountId)))
+            .Balance.ShouldBe(100);
 
-        dbContext.Accounts
-            .Single(a => a.AccountId == sourceAccount.AccountId)
-            .Balance.ShouldBe(amount);
-
-        dbContext.Accounts
-            .Single(a => a.AccountId == targetAccount.AccountId)
+        (await _fixture.Database.ExecuteAsync(
+                db => db.Accounts.SingleAsync(a => a.AccountId == targetAccount.AccountId)))
             .Balance.ShouldBe(900);
 
-        var transfer = dbContext.InternalTransfers.Single(t => t.Id == result.Result.Id);
+        var transfer = await _fixture.Database.ExecuteAsync(
+            db => db.InternalTransfers.SingleAsync(t => t.Id == result.Result.Id));
 
         transfer.SourceUserId.ShouldBe(_user1.Id);
         transfer.SourceAccountId.ShouldBe(sourceAccount.AccountId);
@@ -104,7 +104,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
     [Fact]
     public async Task ShouldConvertAmountOnTransfer()
     {
-        var client = _fixture.CreateClient(_user1);
+        var client = _fixture.HttpClient.CreateClient(_user1!);
         var sourceAccount = _user1!.Accounts.Single(account => account.Currency == Currency.USD);
         var targetAccount = _user2!.Accounts.Single(account => account.Currency == Currency.KZT);
 
@@ -120,18 +120,16 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         result.Result.ShouldNotBeNull();
         result.Result.Id.ShouldBeGreaterThan(0);
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-
-        dbContext.Accounts
-            .Single(a => a.AccountId == sourceAccount.AccountId)
+        (await _fixture.Database.ExecuteAsync(
+                db => db.Accounts.SingleAsync(a => a.AccountId == sourceAccount.AccountId)))
             .Balance.ShouldBe(0);
 
-        dbContext.Accounts
-            .Single(a => a.AccountId == targetAccount.AccountId)
+        (await _fixture.Database.ExecuteAsync(
+                db => db.Accounts.SingleAsync(a => a.AccountId == targetAccount.AccountId)))
             .Balance.ShouldBe(100000 + 94360.2m, 0.1m);
 
-        var transfer = dbContext.InternalTransfers.Single(t => t.Id == result.Result.Id);
+        var transfer = await _fixture.Database.ExecuteAsync(
+            db => db.InternalTransfers.SingleAsync(t => t.Id == result.Result.Id));
 
         transfer.SourceUserId.ShouldBe(_user1.Id);
         transfer.SourceAccountId.ShouldBe(sourceAccount.AccountId);
@@ -148,7 +146,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
     [Fact]
     public async Task ShouldReturnErrorWhenInsufficientFunds()
     {
-        var client = _fixture.CreateClient(_user1);
+        var client = _fixture.HttpClient.CreateClient(_user1!);
         var sourceAccount = _user1!.Accounts.Single(account => account.Currency == Currency.USD);
         var targetAccount = _user2!.Accounts.Single(account => account.Currency == Currency.KZT);
 
@@ -166,7 +164,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
     [Fact]
     public async Task ShouldReturnErrorWhenTargetNotFound()
     {
-        var client = _fixture.CreateClient(_user1);
+        var client = _fixture.HttpClient.CreateClient(_user1!);
         var sourceAccount = _user1!.Accounts.Single(account => account.Currency == Currency.USD);
 
         var result = await client.POSTAsync<TransferRequest, ProblemDetails>("/accounts/transfer",
@@ -183,7 +181,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
     [Fact]
     public async Task ShouldReturnErrorWhenSourceNotFound()
     {
-        var client = _fixture.CreateClient(_user1);
+        var client = _fixture.HttpClient.CreateClient(_user1!);
         var targetAccount = _user2!.Accounts.Single(account => account.Currency == Currency.KZT);
 
         var result = await client.POSTAsync<TransferRequest, ProblemDetails>("/accounts/transfer",
@@ -206,7 +204,7 @@ public class TransferTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
         {
             Email = email,
             PasswordHash = await hashAlgorithm.HashAsync("P@s$w0rd"),
-            Roles = {Role.Detached.User},
+            Roles = { Role.Detached.User },
             DateOfBirth = new DateOnly(2000, 1, 1),
             DateOfRegistration = new DateTime(2019, 1, 1, 1, 1, 1, DateTimeKind.Utc)
         };

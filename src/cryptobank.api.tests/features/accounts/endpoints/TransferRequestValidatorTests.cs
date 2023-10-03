@@ -2,6 +2,7 @@
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
+[Collection(AccountsCollection.Name)]
 public class TransferRequestValidatorTests
 {
     private readonly TransferRequest.Validator _validator = new();

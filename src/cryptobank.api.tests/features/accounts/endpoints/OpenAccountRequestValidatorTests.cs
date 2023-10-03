@@ -3,6 +3,7 @@ using cryptobank.api.features.accounts.endpoints.openAccount;
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
+[Collection(AccountsCollection.Name)]
 public class OpenAccountRequestValidatorTests
 {
     private readonly OpenAccountRequest.Validator _validator = new();
