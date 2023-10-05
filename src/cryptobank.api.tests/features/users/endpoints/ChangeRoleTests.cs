@@ -1,5 +1,4 @@
-﻿using cryptobank.api.db;
-using cryptobank.api.features.users.domain;
+﻿using cryptobank.api.features.users.domain;
 using cryptobank.api.features.users.endpoints.changeRole;
 using cryptobank.api.tests.extensions;
 
@@ -33,13 +32,10 @@ public class ChangeRoleTests
         res.ShouldBeOk();
         res.Result.ShouldBeNull();
 
-        using var scope = _fixture.Services.CreateScope();
-
-        user = await scope.ServiceProvider
-            .GetRequiredService<CryptoBankDbContext>()
-            .Users
-            .Include(u => u.Roles)
-            .SingleAsync(u => u.Id == userId);
+        user = await _fixture.Database
+            .ExecuteAsync(db => db.Users
+                .Include(u => u.Roles)
+                .SingleAsync(u => u.Id == userId));
 
         user.Roles.ShouldContain(Role.Detached.User);
         user.Roles.ShouldContain(Role.Detached.Analyst);

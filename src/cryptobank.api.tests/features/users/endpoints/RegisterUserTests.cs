@@ -33,18 +33,16 @@ public class RegisterUserTests
 
         res.ShouldBeOk();
 
-        using var scope = _fixture.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-
-        var actualUser = await dbContext.Users
-            .Include(u => u.Roles)
-            .SingleOrDefaultAsync(u => u.Email == newUserEmail);
+        var actualUser = await _fixture.Database
+            .ExecuteAsync(db => db.Users
+                .Include(u => u.Roles)
+                .SingleOrDefaultAsync(u => u.Email == newUserEmail));
 
         actualUser.ShouldNotBeNull();
         actualUser.Email.ShouldBe(newUserEmail);
         actualUser.DateOfBirth.ShouldBe(newUserBirthday);
         actualUser.DateOfRegistration.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        actualUser.Roles.ShouldBe(new []{ Role.Detached.User });
+        actualUser.Roles.ShouldBe(new[] {Role.Detached.User});
         actualUser.PasswordHash.ShouldStartWith("$argon2id$v=1");
     }
 }
