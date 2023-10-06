@@ -19,4 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\cryptobank.api\cryptobank.api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\bitcoin\bitcoin.conf">
+      <Link>bitcoin\bitcoin.conf</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

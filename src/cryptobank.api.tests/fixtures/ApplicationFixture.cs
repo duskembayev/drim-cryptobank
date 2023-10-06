@@ -13,6 +13,7 @@ public class ApplicationFixture : IAsyncLifetime
         Redis = new RedisHarness();
         Postgres = new PostgresHarness();
         Database = new DatabaseHarness(Postgres);
+        Regtest = new RegtestHarness();
         HttpClient = new HttpClientHarness();
         Setup = new SetupHarness(Database);
 
@@ -20,9 +21,12 @@ public class ApplicationFixture : IAsyncLifetime
             .AddHarness(Redis)
             .AddHarness(Postgres)
             .AddHarness(Database)
+            .AddHarness(Regtest)
             .AddHarness(HttpClient)
             .AddHarness(Setup);
     }
+
+    internal RegtestHarness Regtest { get; }
 
     internal DatabaseHarness Database { get; }
 
@@ -41,6 +45,7 @@ public class ApplicationFixture : IAsyncLifetime
         await ((IHarness<Program>) Redis).StartAsync(_factory, default);
         await ((IHarness<Program>) Postgres).StartAsync(_factory, default);
         await ((IHarness<Program>) Database).StartAsync(_factory, default);
+        await ((IHarness<Program>) Regtest).StartAsync(_factory, default);
         await ((IHarness<Program>) HttpClient).StartAsync(_factory, default);
         await ((IHarness<Program>) Setup).StartAsync(_factory, default);
 
@@ -51,6 +56,7 @@ public class ApplicationFixture : IAsyncLifetime
     {
         await ((IHarness<Program>) Setup).StopAsync(default);
         await ((IHarness<Program>) HttpClient).StopAsync(default);
+        await ((IHarness<Program>) Regtest).StopAsync(default);
         await ((IHarness<Program>) Database).StopAsync(default);
         await ((IHarness<Program>) Postgres).StopAsync(default);
         await ((IHarness<Program>) Redis).StopAsync(default);

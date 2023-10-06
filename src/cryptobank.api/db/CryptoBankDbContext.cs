@@ -3,6 +3,7 @@ using cryptobank.api.features.deposits.domain;
 using cryptobank.api.features.news.domain;
 using cryptobank.api.features.users.domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace cryptobank.api.db;
 
@@ -20,6 +21,7 @@ public class CryptoBankDbContext : DbContext
     public DbSet<InternalTransfer> InternalTransfers { get; set; } = null!;
     public DbSet<Xpub> Xpubs { get; set; } = null!;
     public DbSet<DepositAddress> DepositAddresses { get; set; } = null!;
+    public DbSet<CryptoDeposit> CryptoDeposits { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,7 +32,52 @@ public class CryptoBankDbContext : DbContext
             .Entity<Account>(BuildAccount)
             .Entity<InternalTransfer>(BuildInternalTransfer)
             .Entity<Xpub>(BuildXpub)
-            .Entity<DepositAddress>(BuildDepositAddress);
+            .Entity<DepositAddress>(BuildDepositAddress)
+            .Entity<CryptoDeposit>(BuildCryptoDeposit);
+    }
+
+    private static void BuildCryptoDeposit(EntityTypeBuilder<CryptoDeposit> builder)
+    {
+        builder.ToTable("CryptoDeposit");
+        builder.HasKey(d => d.Id);
+        builder.HasIndex(d => new {d.TxId, d.Status});
+
+        builder
+            .Property(d => d.Id)
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+
+        builder
+            .HasOne<Account>()
+            .WithMany()
+            .HasForeignKey(d => d.AccountId)
+            .IsRequired();
+
+        builder
+            .HasOne<DepositAddress>()
+            .WithMany()
+            .HasForeignKey(d => d.AccountId)
+            .IsRequired();
+
+        builder
+            .Property(d => d.TxId)
+            .IsRequired()
+            .HasMaxLength(64);
+
+        builder.MoneyProperty(d => d.Amount);
+
+        builder
+            .Property(d => d.DateOfCreation)
+            .IsRequired();
+
+        builder
+            .Property(d => d.DateOfCompletion);
+
+        builder
+            .Property(d => d.Status)
+            .HasConversion<EnumToNumberConverter<DepositStatus, int>>()
+            .IsRequired()
+            .HasDefaultValue(DepositStatus.Pending);
     }
 
     private static void BuildDepositAddress(EntityTypeBuilder<DepositAddress> builder)

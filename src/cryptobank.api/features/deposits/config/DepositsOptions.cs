@@ -7,4 +7,5 @@ public class DepositsOptions
 {
     public required string Xpub { get; init; }
     public required Network Network { get; init; } = Network.TestNet;
+    public required int MinConfirmations { get; init; } = 6;
 }

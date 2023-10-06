@@ -2,6 +2,7 @@
 using cryptobank.api.tests.harnesses.core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using NBitcoin.RPC;
 
 namespace cryptobank.api.tests.harnesses;
 
