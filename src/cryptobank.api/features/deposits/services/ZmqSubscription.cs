@@ -9,7 +9,7 @@ namespace cryptobank.api.features.deposits.services;
 [Singleton<IHostedService>]
 internal sealed class ZmqSubscription : IHostedService, IHealthCheck
 {
-    private const string ConnectionStringName = "bitcoin-zmq";
+    public const string ConnectionStringName = "bitcoin-zmq";
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ZmqSubscription> _logger;
