@@ -1,4 +1,3 @@
-using cryptobank.api.db;
 using cryptobank.api.features.accounts.domain;
 using cryptobank.api.features.accounts.endpoints.reportOpenedDaily;
 using cryptobank.api.features.users.domain;
@@ -7,7 +6,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.accounts.endpoints;
 
-public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
+[Collection(AccountsCollection.Name)]
+public class ReportOpenedDailyTests : IAsyncLifetime
 {
     private readonly HttpClient _client;
     private readonly ApplicationFixture _fixture;
@@ -16,13 +16,12 @@ public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>, IAsyncL
     public ReportOpenedDailyTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient(fixture.Analyst);
+        _client = _fixture.HttpClient.CreateClient(fixture.Setup.Analyst);
     }
 
     public async Task InitializeAsync()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var hashAlgorithm = scope.ServiceProvider.GetRequiredService<IPasswordHashAlgorithm>();
+        var hashAlgorithm = _fixture.Services.GetRequiredService<IPasswordHashAlgorithm>();
 
         _users.Add(await CreateUserAsync("user1@example.com", new[]
         {
@@ -42,19 +41,21 @@ public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>, IAsyncL
             new DateOnly(2020, 1, 2)
         }, hashAlgorithm));
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        dbContext.Attach(Role.Detached.User);
-        dbContext.Users.AddRange(_users);
-        await dbContext.SaveChangesAsync();
+        await _fixture.Database.ExecuteAsync(async db =>
+        {
+            db.Attach(Role.Detached.User);
+            db.Users.AddRange(_users);
+            await db.SaveChangesAsync();
+        });
     }
 
     public async Task DisposeAsync()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-
-        dbContext.RemoveRange(_users);
-        await dbContext.SaveChangesAsync();
+        await _fixture.Database.ExecuteAsync(async db =>
+        {
+            db.RemoveRange(_users);
+            await db.SaveChangesAsync();
+        });
     }
 
     [Fact]
@@ -81,7 +82,7 @@ public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>, IAsyncL
     [Fact]
     public async Task ShouldNotReturnReportWhenUserIsAdministrator()
     {
-        using var adminClient = _fixture.CreateClient(_fixture.Administrator);
+        using var adminClient = _fixture.HttpClient.CreateClient(_fixture.Setup.Administrator);
 
         var result = await adminClient.GETAsync<ReportOpenedDailyRequest, IReadOnlyCollection<OpenedDailyModel>>(
             "/accounts/reports/openedDaily", new ReportOpenedDailyRequest
@@ -96,7 +97,7 @@ public class ReportOpenedDailyTests : IClassFixture<ApplicationFixture>, IAsyncL
     [Fact]
     public async Task ShouldNotReturnReportWhenUserIsUser()
     {
-        using var userClient = _fixture.CreateClient(_fixture.User);
+        using var userClient = _fixture.HttpClient.CreateClient(_fixture.Setup.User);
 
         var result = await userClient.GETAsync<ReportOpenedDailyRequest, IReadOnlyCollection<OpenedDailyModel>>(
             "/accounts/reports/openedDaily", new ReportOpenedDailyRequest

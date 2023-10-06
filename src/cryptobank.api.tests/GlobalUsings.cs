@@ -1,6 +1,8 @@
 ﻿global using System.Net;
 global using cryptobank.api.errors;
 global using cryptobank.api.tests.fixtures;
+global using DotNet.Testcontainers.Builders;
+global using DotNet.Testcontainers.Containers;
 global using FastEndpoints;
 global using FluentValidation.TestHelper;
 global using Microsoft.EntityFrameworkCore;

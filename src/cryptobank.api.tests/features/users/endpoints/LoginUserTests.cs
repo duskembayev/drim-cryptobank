@@ -1,16 +1,18 @@
 ﻿using cryptobank.api.features.users.endpoints.loginUser;
 using cryptobank.api.features.users.models;
 using cryptobank.api.tests.extensions;
+using cryptobank.api.tests.harnesses;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class LoginUserTests : IClassFixture<ApplicationFixture>
+[Collection(UsersCollection.Name)]
+public class LoginUserTests
 {
     private readonly HttpClient _client;
 
     public LoginUserTests(ApplicationFixture fixture)
     {
-        _client = fixture.CreateClient();
+        _client = fixture.HttpClient.CreateClient();
     }
 
     [Fact]
@@ -19,8 +21,8 @@ public class LoginUserTests : IClassFixture<ApplicationFixture>
         var res = await _client.POSTAsync<LoginUserRequest, TokenModel>("/user/login",
             new LoginUserRequest
             {
-                Email = ApplicationFixture.UserEmail,
-                Password = ApplicationFixture.UserPassword
+                Email = SetupHarness.UserEmail,
+                Password = SetupHarness.UserPassword
             });
 
         res.ShouldBeOk();
@@ -31,8 +33,8 @@ public class LoginUserTests : IClassFixture<ApplicationFixture>
 
     [Theory]
     [InlineData("invaliduser@example.com", "inva@lidP@ssw0rd")]
-    [InlineData(ApplicationFixture.UserEmail, "inva@lidP@ssw0rd")]
-    [InlineData("invaliduser@example.com", ApplicationFixture.UserPassword)]
+    [InlineData(SetupHarness.UserEmail, "inva@lidP@ssw0rd")]
+    [InlineData("invaliduser@example.com", SetupHarness.UserPassword)]
     public async Task ShouldReturnErrorWhenInvalidCredentials(string email, string password)
     {
         var res = await _client.POSTAsync<LoginUserRequest, ProblemDetails>("/user/login",

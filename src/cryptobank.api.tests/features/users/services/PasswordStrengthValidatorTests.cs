@@ -2,6 +2,7 @@
 
 namespace cryptobank.api.tests.features.users.services;
 
+[Collection(UsersCollection.Name)]
 public class PasswordStrengthValidatorTests
 {
     private readonly PasswordStrengthValidator _validator = new();

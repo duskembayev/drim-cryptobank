@@ -5,10 +5,12 @@ using cryptobank.api.features.users.endpoints.refreshToken;
 using cryptobank.api.features.users.models;
 using cryptobank.api.features.users.services;
 using cryptobank.api.tests.extensions;
+using cryptobank.api.tests.harnesses;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class RefreshTokenTests : IClassFixture<ApplicationFixture>, IAsyncLifetime
+[Collection(UsersCollection.Name)]
+public class RefreshTokenTests : IAsyncLifetime
 {
     private readonly HttpClient _client;
     private readonly ApplicationFixture _fixture;
@@ -17,15 +19,15 @@ public class RefreshTokenTests : IClassFixture<ApplicationFixture>, IAsyncLifeti
     public RefreshTokenTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient();
+        _client = _fixture.HttpClient.CreateClient();
     }
 
     public async Task InitializeAsync()
     {
         var result = await _client.POSTAsync<LoginUserRequest, TokenModel>("/user/login", new LoginUserRequest
         {
-            Email = ApplicationFixture.UserEmail,
-            Password = ApplicationFixture.UserPassword
+            Email = SetupHarness.UserEmail,
+            Password = SetupHarness.UserPassword
         });
 
         _token = result.Result;
@@ -58,7 +60,7 @@ public class RefreshTokenTests : IClassFixture<ApplicationFixture>, IAsyncLifeti
     [Fact]
     public async Task ShouldNotRefreshTokenWhenRevoked()
     {
-        var refreshTokenStorage = _fixture.AppFactory.Services.GetRequiredService<IRefreshTokenStorage>();
+        var refreshTokenStorage = _fixture.Services.GetRequiredService<IRefreshTokenStorage>();
         refreshTokenStorage.Revoke(_token!.RefreshToken);
 
         var result = await _client.POSTAsync<RefreshTokenRequest, ProblemDetails>("/user/refreshToken",

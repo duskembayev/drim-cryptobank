@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace cryptobank.api.tests.features.users.services;
 
+[Collection(UsersCollection.Name)]
 public class AccessTokenProviderTests
 {
     private const string ValidToken =

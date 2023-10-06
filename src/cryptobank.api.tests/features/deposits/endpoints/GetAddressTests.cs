@@ -6,7 +6,8 @@ using cryptobank.api.tests.extensions;
 
 namespace cryptobank.api.tests.features.deposits.endpoints;
 
-public class GetAddressTests : IClassFixture<ApplicationFixture>
+[Collection(DepositsCollection.Name)]
+public class GetAddressTests
 {
     private const string Xpub =
         "tpubD6NzVbkrYhZ4YAoLbobYyBFnWrLokvou8GC8jimnijV6ymg9uMxNM5ioov7eZkSDjqDaN81UDaz9y9G2CNfohhGMaesbCY22ziXZzZzEKuK";
@@ -17,7 +18,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     public GetAddressTests(ApplicationFixture fixture)
     {
         _fixture = fixture;
-        _client = _fixture.CreateClient(_fixture.User);
+        _client = _fixture.HttpClient.CreateClient(_fixture.Setup.User);
     }
 
     [Fact]
@@ -26,19 +27,19 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
         const uint derivationIndex = 10u;
         const string expectedAddress = "tb1qwt9vjywsjnlv88xw0qpjxys45cf4r50h4m2nky";
 
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        var account = await CreateAccountAsync(dbContext, "my-btc-account", Currency.BTC);
-        var xpub = await SetupXpubAsync(dbContext, derivationIndex);
+        var (accountId, xpubId) = await _fixture.Database.ExecuteAsync(async db =>
+        {
+            var account = await CreateAccountAsync(db, "my-btc-account", Currency.BTC);
+            var xpub = await SetupXpubAsync(db, derivationIndex);
+            return (account.AccountId, xpub.Id);
+        });
 
         var result = await _client.GETAsync<GetAddressRequest, DepositAddressModel>(
             "/deposits/address",
-            new GetAddressRequest { AccountId = account.AccountId });
+            new GetAddressRequest {AccountId = accountId});
 
-        await dbContext.Entry(xpub).ReloadAsync();
-
-        var address = await dbContext.DepositAddresses
-            .SingleOrDefaultAsync(d => d.AccountId == account.AccountId);
+        var address = await _fixture.Database
+            .ExecuteAsync(db => db.DepositAddresses.SingleOrDefaultAsync(d => d.AccountId == accountId));
 
         result.ShouldBeOk();
         result.Result.ShouldNotBeNull();
@@ -47,7 +48,10 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
         address.ShouldNotBeNull();
         address.DerivationIndex.ShouldBe(derivationIndex);
         address.CryptoAddress.ShouldBe(expectedAddress);
-        address.XpubId.ShouldBe(xpub.Id);
+        address.XpubId.ShouldBe(xpubId);
+
+        var xpub = await _fixture.Database
+            .ExecuteAsync(db => db.Xpubs.SingleAsync(x => x.Id == xpubId));
 
         xpub.NextDerivationIndex.ShouldBe(derivationIndex + 1);
     }
@@ -56,23 +60,27 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     public async Task ShouldReturnAlreadyExistingAddress()
     {
         const string expectedAddress = "some-generated-before-address";
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        var account = await CreateAccountAsync(dbContext, "my-account", Currency.EUR);
-        var xpub = await SetupXpubAsync(dbContext, 12);
 
-        dbContext.DepositAddresses.Add(new DepositAddress
+        var accountId = await _fixture.Database.ExecuteAsync(async db =>
         {
-            AccountId = account.AccountId,
-            XpubId = xpub.Id,
-            DerivationIndex = 10,
-            CryptoAddress = expectedAddress
+            var account = await CreateAccountAsync(db, "my-account", Currency.EUR);
+            var xpub = await SetupXpubAsync(db, 12);
+
+            db.DepositAddresses.Add(new DepositAddress
+            {
+                AccountId = account.AccountId,
+                XpubId = xpub.Id,
+                DerivationIndex = 10,
+                CryptoAddress = expectedAddress
+            });
+
+            await db.SaveChangesAsync();
+            return account.AccountId;
         });
-        await dbContext.SaveChangesAsync();
 
         var result = await _client.GETAsync<GetAddressRequest, DepositAddressModel>(
             "/deposits/address",
-            new GetAddressRequest { AccountId = account.AccountId });
+            new GetAddressRequest {AccountId = accountId});
 
         result.Result?.Address.ShouldBe(expectedAddress);
     }
@@ -82,7 +90,7 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     {
         var result = await _client.GETAsync<GetAddressRequest, ProblemDetails>(
             "/deposits/address",
-            new GetAddressRequest { AccountId = "some-unknown-account" });
+            new GetAddressRequest {AccountId = "some-unknown-account"});
 
         result.ShouldBeValidationProblem(nameof(GetAddressRequest.AccountId), "deposits:get_address:account_not_found");
     }
@@ -90,13 +98,12 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
     [Fact]
     public async Task ShouldReturnErrorWhenAccountNotBtc()
     {
-        using var scope = _fixture.AppFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
-        var account = await CreateAccountAsync(dbContext, "my-eur-account", Currency.EUR);
+        var account = await _fixture.Database
+            .ExecuteAsync(async db => await CreateAccountAsync(db, "my-eur-account", Currency.EUR));
 
         var result = await _client.GETAsync<GetAddressRequest, ProblemDetails>(
             "/deposits/address",
-            new GetAddressRequest { AccountId = account.AccountId });
+            new GetAddressRequest {AccountId = account.AccountId});
 
         result.ShouldBeValidationProblem(nameof(GetAddressRequest.AccountId), "deposits:get_address:account_not_btc");
     }
@@ -107,20 +114,19 @@ public class GetAddressTests : IClassFixture<ApplicationFixture>
         var account = new Account
         {
             AccountId = accountId,
-            User = _fixture.User,
+            User = _fixture.Setup.User,
             Currency = currency,
             Balance = 0,
             DateOfOpening = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
 
-        dbContext.Attach(_fixture.User);
+        dbContext.Attach(_fixture.Setup.User);
         dbContext.Accounts.Add(account);
         await dbContext.SaveChangesAsync();
         return account;
     }
 
-    private async ValueTask<Xpub> SetupXpubAsync(
-        CryptoBankDbContext dbContext, uint nextDerivationIndex)
+    private async ValueTask<Xpub> SetupXpubAsync(CryptoBankDbContext dbContext, uint nextDerivationIndex)
     {
         var xpub = new Xpub
         {

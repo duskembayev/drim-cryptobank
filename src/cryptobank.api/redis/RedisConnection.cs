@@ -5,7 +5,7 @@ namespace cryptobank.api.redis;
 
 public class RedisConnection : IRedisConnection, IHostedService, IHealthCheck
 {
-    private const string ConnectionStringName = "redis";
+    public const string ConnectionStringName = "redis";
 
     private readonly IConfiguration _configuration;
     private ConnectionMultiplexer? _connectionMultiplexer;

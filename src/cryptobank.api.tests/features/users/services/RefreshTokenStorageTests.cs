@@ -1,33 +1,33 @@
 using System.Text.Json.Nodes;
 using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.services;
+using cryptobank.api.redis;
 using cryptobank.api.utils.environment;
 using StackExchange.Redis;
 
 namespace cryptobank.api.tests.features.users.services;
 
-public class RefreshTokenStorageTests : IClassFixture<RedisFixture>
+[Collection(UsersCollection.Name)]
+public class RefreshTokenStorageTests
 {
-    private readonly RedisFixture _fixture;
     private readonly StubRndBytesGenerator _rndBytesGenerator;
     private readonly RefreshTokenStorage _storage;
+    private readonly IRedisConnection _redisConnection;
 
-    public RefreshTokenStorageTests(RedisFixture fixture)
+    public RefreshTokenStorageTests(ApplicationFixture fixture)
     {
-        _fixture = fixture;
         _rndBytesGenerator = new StubRndBytesGenerator();
-
-        var options = new RefreshTokenOptions
-        {
-            TokenSize = 8,
-            Expiration = TimeSpan.FromMinutes(1)
-        };
+        _redisConnection = fixture.Services.GetRequiredService<IRedisConnection>();
 
         _storage = new RefreshTokenStorage(
-            _fixture.Connection,
+            _redisConnection,
             new RefreshTokenAttributesSerializer(),
             _rndBytesGenerator,
-            new OptionsWrapper<RefreshTokenOptions>(options));
+            new OptionsWrapper<RefreshTokenOptions>(new RefreshTokenOptions
+            {
+                TokenSize = 8,
+                Expiration = TimeSpan.FromMinutes(1)
+            }));
     }
 
     [Theory]
@@ -90,7 +90,7 @@ public class RefreshTokenStorageTests : IClassFixture<RedisFixture>
         _rndBytesGenerator.NextToken = tokenPayload;
         var token = _storage.Issue(userId, false);
 
-        _fixture.Connection.Database
+        _redisConnection.Database
             .KeyExpire(RedisKey(userId, tokenPayload), TimeSpan.Zero)
             .ShouldBeTrue();
 
@@ -158,7 +158,7 @@ public class RefreshTokenStorageTests : IClassFixture<RedisFixture>
     private void AssertRedisValue(int userId, string token, bool allowExtend,
         string? replacedBy = null, bool isRevoked = false)
     {
-        var redisValue = _fixture.Connection.Database.StringGet(RedisKey(userId, token));
+        var redisValue = _redisConnection.Database.StringGet(RedisKey(userId, token));
         var node = JsonNode.Parse(redisValue.ToString());
 
         node.ShouldNotBeNull();

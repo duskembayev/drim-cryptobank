@@ -5,6 +5,7 @@ using cryptobank.api.utils.exchange;
 
 namespace cryptobank.api.tests.features.accounts.services;
 
+[Collection(AccountsCollection.Name)]
 public class CurrencyConverterTests
 {
     private readonly CurrencyConverter _currencyConverter;

@@ -2,6 +2,7 @@ using cryptobank.api.features.deposits.endpoints.getAddress;
 
 namespace cryptobank.api.tests.features.deposits.endpoints;
 
+[Collection(DepositsCollection.Name)]
 public class GetAddressValidatorTests
 {
     private readonly GetAddressRequest.Validator _validator = new();

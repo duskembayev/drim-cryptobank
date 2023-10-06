@@ -1,18 +1,25 @@
+using cryptobank.api.db;
 using cryptobank.api.features.users.config;
 using cryptobank.api.features.users.endpoints.registerUser;
 using cryptobank.api.features.users.services;
+using cryptobank.api.tests.harnesses;
 using cryptobank.api.utils.environment;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class RegisterUserRequestValidatorTests : IClassFixture<DbFixture>
+[Collection(UsersCollection.Name)]
+public class RegisterUserRequestValidatorTests : IAsyncLifetime
 {
-    private readonly ITimeProvider _timeProvider;
-    private readonly RegisterUserRequest.Validator _validator;
+    private readonly ApplicationFixture _fixture;
     private readonly IPasswordStrengthValidator _passwordStrengthValidator;
+    private readonly ITimeProvider _timeProvider;
+    private IServiceScope? _scope;
+    private RegisterUserRequest.Validator? _validator;
 
-    public RegisterUserRequestValidatorTests(DbFixture fixture)
+    public RegisterUserRequestValidatorTests(ApplicationFixture fixture)
     {
+        _fixture = fixture;
+
         _timeProvider = Substitute.For<ITimeProvider>();
         _timeProvider.UtcNow.Returns(new DateTime(2023, 6, 5, 11, 2, 37, DateTimeKind.Utc));
         _timeProvider.Today.Returns(new DateOnly(2023, 6, 5));
@@ -21,12 +28,25 @@ public class RegisterUserRequestValidatorTests : IClassFixture<DbFixture>
         _passwordStrengthValidator
             .Validate(Arg.Any<string>())
             .Returns(true);
+    }
+
+    public Task InitializeAsync()
+    {
+        _scope = _fixture.Services.CreateScope();
 
         _validator = new RegisterUserRequest.Validator(
             _passwordStrengthValidator,
             _timeProvider,
-            fixture.DbContext,
+            _scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>(),
             new OptionsWrapper<RegisterUserOptions>(new RegisterUserOptions()));
+
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
+    {
+        _scope?.Dispose();
+        return Task.CompletedTask;
     }
 
     [Theory]
@@ -49,8 +69,9 @@ public class RegisterUserRequestValidatorTests : IClassFixture<DbFixture>
     }
 
     [Theory]
-    [InlineData("fry@futurama.com")]
-    [InlineData("bender@futurama.com")]
+    [InlineData(SetupHarness.UserEmail)]
+    [InlineData(SetupHarness.AdministratorEmail)]
+    [InlineData(SetupHarness.AnalystEmail)]
     public async Task ShouldValidateEmailNotUsed(string email)
     {
         var result = await _validator.TestValidateAsync(new RegisterUserRequest

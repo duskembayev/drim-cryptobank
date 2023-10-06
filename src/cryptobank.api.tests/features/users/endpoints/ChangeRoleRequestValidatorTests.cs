@@ -4,15 +4,31 @@ using cryptobank.api.features.users.endpoints.changeRole;
 
 namespace cryptobank.api.tests.features.users.endpoints;
 
-public class ChangeRoleRequestValidatorTests : IClassFixture<DbFixture>
+[Collection(UsersCollection.Name)]
+public class ChangeRoleRequestValidatorTests : IAsyncLifetime
 {
-    private readonly ChangeRoleRequest.Validator _validator;
-    private readonly CryptoBankDbContext _dbContext;
+    private readonly ApplicationFixture _fixture;
+    private CryptoBankDbContext? _dbContext;
+    private IServiceScope? _scope;
+    private ChangeRoleRequest.Validator? _validator;
 
-    public ChangeRoleRequestValidatorTests(DbFixture fixture)
+    public ChangeRoleRequestValidatorTests(ApplicationFixture fixture)
     {
-        _dbContext = fixture.DbContext;
+        _fixture = fixture;
+    }
+
+    public Task InitializeAsync()
+    {
+        _scope = _fixture.Services.CreateScope();
+        _dbContext = _scope.ServiceProvider.GetRequiredService<CryptoBankDbContext>();
         _validator = new ChangeRoleRequest.Validator(_dbContext);
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
+    {
+        _scope?.Dispose();
+        return Task.CompletedTask;
     }
 
     [Theory]
@@ -35,11 +51,9 @@ public class ChangeRoleRequestValidatorTests : IClassFixture<DbFixture>
     [Fact]
     public async Task ShouldValidateRolesEmpty()
     {
-        var user = await _dbContext.Users.SingleAsync(user => user.Email == "fry@futurama.com");
-
         var result = await _validator.TestValidateAsync(new ChangeRoleRequest
         {
-            UserId = user.Id,
+            UserId = _fixture.Setup.User.Id,
             Roles = Array.Empty<string>()
         });
 
@@ -51,11 +65,9 @@ public class ChangeRoleRequestValidatorTests : IClassFixture<DbFixture>
     [Fact]
     public async Task ShouldValidateRolesInvalid()
     {
-        var user = await _dbContext.Users.SingleAsync(user => user.Email == "fry@futurama.com");
-
         var result = await _validator.TestValidateAsync(new ChangeRoleRequest
         {
-            UserId = user.Id,
+            UserId = _fixture.Setup.User.Id,
             Roles = new[] { "Director" }
         });
 
